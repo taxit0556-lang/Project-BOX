@@ -1,5 +1,5 @@
 using UnityEngine;
-
+//this is a celeste type of movement script
 public class Player_Movement : MonoBehaviour
 {
     [Header("Movement")]
