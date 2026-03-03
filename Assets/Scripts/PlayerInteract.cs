@@ -15,7 +15,7 @@ public class PlayerInteract : MonoBehaviour
             TryPickup();
         }
 
-        if (Input.GetKeyDown(KeyCode.D))
+        if (Input.GetKeyDown(KeyCode.Q))
         {
             DropItem();
         }
