@@ -153,10 +153,10 @@ public class Player_Movement : MonoBehaviour
             rb.linearVelocity = new Vector2(movement.x * MoveSpeed, rb.linearVelocity.y);
         }
 
-        if(rb.linearVelocity.y > 0)
-            rb.gravityScale = 2f;
-        else if(rb.linearVelocity.y < 0)
-            rb.gravityScale = 3.5f;
+        if (rb.linearVelocity.y >= 0)
+        rb.gravityScale = 2f;
+        else
+        rb.gravityScale = 3.5f;
     }
 
     IEnumerator StartDash()
@@ -190,7 +190,9 @@ public class Player_Movement : MonoBehaviour
     void StopDash()
     {
         isDashing = false;
-        rb.gravityScale = 3.5f;
+        rb.gravityScale = 2f;
+        
+        rb.linearVelocity = new Vector2(rb.linearVelocity.x, -0.1f);
     }
 
     public bool IsGrounded()
