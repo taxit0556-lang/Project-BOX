@@ -1,4 +1,6 @@
 using UnityEngine;
+using System.Collections;
+
 //this is a celeste type of movement script
 public class Player_Movement : MonoBehaviour
 {
@@ -8,26 +10,32 @@ public class Player_Movement : MonoBehaviour
     public float CyoteTime;
     public float jumpBuffering_Window;
 
-
     private float jumpBuffering_Timer;
     private bool CanjumpBuffer;
     private bool StartjumpBuffer_Timer;
+
+    [Header("Dash")]
+    public float dashSpeed = 20f;
+    public float dashTime = 0.2f;
+    public float dashFreezeTime = 0.05f;
+    private bool isDashing;
+    private bool canDash = true;
+    private float dashTimer;
 
     [Header("WallClimbing")]
     public bool isWallSliding;
     public bool isWallJumping;
     public bool SameWallJumping;
+
     private float wallSlidingSpeed = 2f;
     private float wallJumpTime = 0.2f;
     public float wallJumpDirection;
     public float LastTimeWallJumped;
     public bool StartWallJumpTimer;
-
     private float wallJumpCounter;
     public Vector2 wallJumpingPower;
 
     public string State;
-
     Rigidbody2D rb;
     public Vector2 movement;
 
@@ -36,6 +44,7 @@ public class Player_Movement : MonoBehaviour
     [SerializeField]private Transform GroundCheck;
     [SerializeField]private LayerMask WallLayer;
     [SerializeField]private Transform WallCheck;
+
     private float LastTimeGrounded;
     private float TimeGrounded;
 
@@ -45,16 +54,15 @@ public class Player_Movement : MonoBehaviour
     {
         jumpBuffering_Timer = 1000000000;
     }
+
     void Start()
     {
         rb = GetComponent<Rigidbody2D>();
     }
-    
+
     void Update()
     {
         movement.x = Input.GetAxisRaw("Horizontal");
-
-        int RoundedMoveSpeed = (int)MoveSpeed;
         wallJumpingPower = new Vector2(MoveSpeed, 13f);
 
         Vector3 localScale = transform.localScale;
@@ -70,11 +78,34 @@ public class Player_Movement : MonoBehaviour
             transform.localScale = localScale;
         }
 
+        // DASH INPUT
+        if (Input.GetKeyDown(KeyCode.LeftShift) && canDash)
+        {
+            StartCoroutine(StartDash());
+        }
+
+        // DASH TIMER
+        if (isDashing)
+        {
+            dashTimer -= Time.deltaTime;
+            if (dashTimer <= 0)
+            {
+                StopDash();
+            }
+        }
+
+        // RESET DASH ON GROUND
+        if (IsGrounded())
+        {
+            canDash = true;
+        }
+
         //normal Jump
         if(Input.GetKeyDown(KeyCode.Space) && IsGrounded())
         {
             rb.linearVelocity = new Vector2(rb.linearVelocity.x, jumpingPower);
         }
+
         if(Input.GetKeyUp(KeyCode.Space) && rb.linearVelocity.y > 0f)
         {
             rb.linearVelocity = new Vector2(rb.linearVelocity.x, rb.linearVelocity.y * 0.5f);
@@ -88,8 +119,7 @@ public class Player_Movement : MonoBehaviour
             }
 
             if(StartWallJumpTimer)
-                LastTimeWallJumped += 1 * Time.deltaTime;
-
+                LastTimeWallJumped += Time.deltaTime;
 
             if (isWallSliding)
             {
@@ -97,6 +127,7 @@ public class Player_Movement : MonoBehaviour
                 LastTimeWallJumped = 0;
             }
         }
+
         JumpBuffering();
         WallSlide();
         WallJump();
@@ -104,16 +135,16 @@ public class Player_Movement : MonoBehaviour
 
     void FixedUpdate()
     {
+        if (isDashing) return;
+
         if (!IsGrounded())
         {
-            LastTimeGrounded += 1 * Time.deltaTime;
-
+            LastTimeGrounded += Time.deltaTime;
             TimeGrounded = 0;
         }
         else
         {
-            TimeGrounded += 1 * Time.deltaTime;
-            
+            TimeGrounded += Time.deltaTime;
             LastTimeGrounded = 0;
         }
 
@@ -121,26 +152,57 @@ public class Player_Movement : MonoBehaviour
         {
             rb.linearVelocity = new Vector2(movement.x * MoveSpeed, rb.linearVelocity.y);
         }
-        else if (!isWallJumping && !IsGrounded() && movement.x == 0)
-        {
-            Debug.Log("NotMoving");
-            rb.linearVelocity = new Vector2(rb.linearVelocity.x, rb.linearVelocity.y);
-        }
+
         if(rb.linearVelocity.y > 0)
             rb.gravityScale = 2f;
-
         else if(rb.linearVelocity.y < 0)
             rb.gravityScale = 3.5f;
+    }
+
+    IEnumerator StartDash()
+    {
+        canDash = false;
+        isDashing = true;
+
+        // FREEZE FRAME
+        float originalTimeScale = Time.timeScale;
+        Time.timeScale = 0f;
+        yield return new WaitForSecondsRealtime(dashFreezeTime);
+        Time.timeScale = originalTimeScale;
+
+        dashTimer = dashTime;
+        rb.gravityScale = 0f;
+
+        Vector2 inputDir = new Vector2(movement.x, Input.GetAxisRaw("Vertical"));
+
+        if (inputDir == Vector2.zero)
+            inputDir = new Vector2(transform.localScale.x, 0);
+
+        // SNAP TO 8 DIRECTIONS
+        inputDir.x = Mathf.Round(inputDir.x);
+        inputDir.y = Mathf.Round(inputDir.y);
+
+        inputDir.Normalize();
+
+        rb.linearVelocity = inputDir * dashSpeed;
+    }
+
+    void StopDash()
+    {
+        isDashing = false;
+        rb.gravityScale = 3.5f;
     }
 
     public bool IsGrounded()
     {
         return Physics2D.OverlapCircle(GroundCheck.position, 0.3f, groundLayer);
     }
+
     private bool IsWalled()
     {
         return Physics2D.OverlapCircle(WallCheck.position, 0.2f, WallLayer);
     }
+
     private void WallSlide()
     {
         if(IsWalled() && !IsGrounded() && movement.x != 0 || IsWalled() && !IsGrounded() && LastTimeWallJumped > 0)
@@ -154,13 +216,14 @@ public class Player_Movement : MonoBehaviour
         }
     }
 
-
     private void WallJump()
     {
         Vector3 localScale = transform.localScale;
+
         if (isWallSliding)
         {
             isWallJumping = false;
+
             if(transform.localScale.x > 0)
                 wallJumpDirection = -transform.localScale.x;
 
@@ -168,7 +231,6 @@ public class Player_Movement : MonoBehaviour
                 wallJumpDirection = -transform.localScale.x;
 
             wallJumpCounter = wallJumpTime;
-
             CancelInvoke(nameof(StopWallJump));
         }
         else
@@ -177,34 +239,31 @@ public class Player_Movement : MonoBehaviour
         }
 
         if(Input.GetKeyDown(KeyCode.Space) && wallJumpCounter > 0f)
-        {    
+        {
             isWallJumping = true;
+
             rb.linearVelocity = new Vector2(wallJumpDirection * wallJumpingPower.x, wallJumpingPower.y);
+
             wallJumpCounter = 0f;
 
             if(transform.localScale.x != wallJumpDirection)
             {
-                if(wallJumpDirection > 0)
-                    localScale.x = 1f;
+                if(wallJumpDirection > 0) localScale.x = 1f;
+                if(wallJumpDirection < 0) localScale.x = -1f;
 
-                if(wallJumpDirection < 0)
-                    localScale.x = -1f;
-
-                    
                 transform.localScale = localScale;
             }
+
             Invoke(nameof(StopWallJump), 0.3f);
         }
 
         if (IsGrounded() && isWallJumping)
         {
-           StopWallJump();
+            StopWallJump();
         }
 
-
-
         if(-movement.x == wallJumpDirection && isWallJumping && LastTimeWallJumped >= 0.05f)
-        {             
+        {
             transform.localScale = localScale;
             SameWallJumping = true;
         }
@@ -213,6 +272,7 @@ public class Player_Movement : MonoBehaviour
             SameWallJumping = false;
         }
     }
+
     private void StopWallJump()
     {
         isWallJumping = false;
@@ -220,7 +280,6 @@ public class Player_Movement : MonoBehaviour
     }
 
     void JumpBuffering()
-
     {
         if(!IsGrounded() && Input.GetKeyDown(KeyCode.Space))
         {
@@ -230,19 +289,15 @@ public class Player_Movement : MonoBehaviour
         else if(jumpBuffering_Timer > jumpBuffering_Window)
             StartjumpBuffer_Timer = false;
 
-
         if(jumpBuffering_Timer < jumpBuffering_Window)
         {
             CanjumpBuffer = true;
         }
-        else
-            CanjumpBuffer = false;
-
+        else CanjumpBuffer = false;
 
         if (CanjumpBuffer && IsGrounded())
         {
             CanjumpBuffer = false;
-
             rb.linearVelocity = new Vector2(rb.linearVelocity.x, jumpingPower);
 
             if(Input.GetKeyUp(KeyCode.Space) && rb.linearVelocity.y > 0f)
@@ -253,9 +308,8 @@ public class Player_Movement : MonoBehaviour
 
         if (StartjumpBuffer_Timer)
         {
-            jumpBuffering_Timer += 1 * Time.deltaTime;
+            jumpBuffering_Timer += Time.deltaTime;
         }
-        else
-            jumpBuffering_Timer = jumpBuffering_Window;
+        else jumpBuffering_Timer = jumpBuffering_Window;
     }
 }
