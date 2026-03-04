@@ -1,5 +1,6 @@
 using UnityEngine;
 using System.Collections;
+using System.Collections.Generic; // ADDED
 
 //this is a celeste type of movement script
 public class Player_Movement : MonoBehaviour
@@ -13,6 +14,13 @@ public class Player_Movement : MonoBehaviour
     private float jumpBuffering_Timer;
     private bool CanjumpBuffer;
     private bool StartjumpBuffer_Timer;
+
+    [Header("Jump Lock")]
+    //after orb colllected, jump virtue can be unlocked.
+    public bool canJump = false; // ADDED (jump locked at start)
+
+    [Header("Virtues")]
+    public List<string> unlockedVirtues = new List<string>(); // ADDED
 
     [Header("Dash")]
     public float dashSpeed = 20f;
@@ -100,8 +108,8 @@ public class Player_Movement : MonoBehaviour
             canDash = true;
         }
 
-        //normal Jump
-        if(Input.GetKeyDown(KeyCode.Space) && IsGrounded())
+        // NORMAL JUMP (MODIFIED: added canJump)
+        if(Input.GetKeyDown(KeyCode.Space) && IsGrounded() && canJump)
         {
             rb.linearVelocity = new Vector2(rb.linearVelocity.x, jumpingPower);
         }
@@ -109,6 +117,12 @@ public class Player_Movement : MonoBehaviour
         if(Input.GetKeyUp(KeyCode.Space) && rb.linearVelocity.y > 0f)
         {
             rb.linearVelocity = new Vector2(rb.linearVelocity.x, rb.linearVelocity.y * 0.5f);
+        }
+
+        // VIRTUE VIEW (ADDED)
+        if (Input.GetKeyDown(KeyCode.T))
+        {
+            ShowVirtues();
         }
 
         if(!IsGrounded())
@@ -154,9 +168,9 @@ public class Player_Movement : MonoBehaviour
         }
 
         if (rb.linearVelocity.y >= 0)
-        rb.gravityScale = 2f;
+            rb.gravityScale = 2f;
         else
-        rb.gravityScale = 3.5f;
+            rb.gravityScale = 3.5f;
     }
 
     IEnumerator StartDash()
@@ -164,7 +178,6 @@ public class Player_Movement : MonoBehaviour
         canDash = false;
         isDashing = true;
 
-        // FREEZE FRAME
         float originalTimeScale = Time.timeScale;
         Time.timeScale = 0f;
         yield return new WaitForSecondsRealtime(dashFreezeTime);
@@ -178,10 +191,8 @@ public class Player_Movement : MonoBehaviour
         if (inputDir == Vector2.zero)
             inputDir = new Vector2(transform.localScale.x, 0);
 
-        // SNAP TO 8 DIRECTIONS
         inputDir.x = Mathf.Round(inputDir.x);
         inputDir.y = Mathf.Round(inputDir.y);
-
         inputDir.Normalize();
 
         rb.linearVelocity = inputDir * dashSpeed;
@@ -191,7 +202,6 @@ public class Player_Movement : MonoBehaviour
     {
         isDashing = false;
         rb.gravityScale = 2f;
-        
         rb.linearVelocity = new Vector2(rb.linearVelocity.x, -0.1f);
     }
 
@@ -226,11 +236,7 @@ public class Player_Movement : MonoBehaviour
         {
             isWallJumping = false;
 
-            if(transform.localScale.x > 0)
-                wallJumpDirection = -transform.localScale.x;
-
-            if(transform.localScale.x < 0)
-                wallJumpDirection = -transform.localScale.x;
+            wallJumpDirection = -transform.localScale.x;
 
             wallJumpCounter = wallJumpTime;
             CancelInvoke(nameof(StopWallJump));
@@ -240,7 +246,8 @@ public class Player_Movement : MonoBehaviour
             wallJumpCounter -= Time.deltaTime;
         }
 
-        if(Input.GetKeyDown(KeyCode.Space) && wallJumpCounter > 0f)
+        // MODIFIED: added canJump
+        if(Input.GetKeyDown(KeyCode.Space) && wallJumpCounter > 0f && canJump)
         {
             isWallJumping = true;
 
@@ -283,7 +290,8 @@ public class Player_Movement : MonoBehaviour
 
     void JumpBuffering()
     {
-        if(!IsGrounded() && Input.GetKeyDown(KeyCode.Space))
+        // MODIFIED: added canJump
+        if(!IsGrounded() && Input.GetKeyDown(KeyCode.Space) && canJump)
         {
             jumpBuffering_Timer = 0;
             StartjumpBuffer_Timer = true;
@@ -297,7 +305,7 @@ public class Player_Movement : MonoBehaviour
         }
         else CanjumpBuffer = false;
 
-        if (CanjumpBuffer && IsGrounded())
+        if (CanjumpBuffer && IsGrounded() && canJump)
         {
             CanjumpBuffer = false;
             rb.linearVelocity = new Vector2(rb.linearVelocity.x, jumpingPower);
@@ -313,5 +321,16 @@ public class Player_Movement : MonoBehaviour
             jumpBuffering_Timer += Time.deltaTime;
         }
         else jumpBuffering_Timer = jumpBuffering_Window;
+    }
+
+    // ADDED
+    void ShowVirtues()
+    {
+        Debug.Log("Unlocked Virtues:");
+
+        foreach (string virtue in unlockedVirtues)
+        {
+            Debug.Log("- " + virtue);
+        }
     }
 }
