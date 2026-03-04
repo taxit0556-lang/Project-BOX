@@ -21,33 +21,47 @@ public class PlayerInteract : MonoBehaviour
         }
     }
 
-    void TryPickup()
+   void TryPickup()
+{
+    if (storedItem != null)
+        return;
+
+    Collider2D hit = Physics2D.OverlapCircle(transform.position, interactRange);
+
+    if (hit == null) return;
+
+    
+    if (hit.CompareTag("JumpOrb"))
     {
-        Debug.Log("TryPickup CALLED");
-        Debug.Log("storedItem: " + storedItem);
+        Player_Movement movement = GetComponent<Player_Movement>();
 
-        if (storedItem != null)
+        if (movement != null)
         {
-            Debug.Log("EXITING because already holding");
-            return;
+            movement.canJump = true;
+
+            if (!movement.unlockedVirtues.Contains("Jump"))
+                movement.unlockedVirtues.Add("Jump");
+
+            Debug.Log("Jump Unlocked!");
         }
 
-        // Changed from Raycast to OverlapCircle
-        Collider2D hit = Physics2D.OverlapCircle(transform.position, interactRange);
-
-        if (hit != null && hit.CompareTag("Pickup"))
-        {
-            storedItem = hit.gameObject;
-
-            Rigidbody2D rb = storedItem.GetComponent<Rigidbody2D>();
-            if (rb != null)
-                rb.simulated = false;
-
-            storedItem.SetActive(false);
-
-            Debug.Log("Picked up: " + storedItem.name);
-        }
+        
     }
+
+    
+    if (hit.CompareTag("Pickup"))
+    {
+        storedItem = hit.gameObject;
+
+        Rigidbody2D rb = storedItem.GetComponent<Rigidbody2D>();
+        if (rb != null)
+            rb.simulated = false;
+
+        storedItem.SetActive(false);
+
+        Debug.Log("Picked up: " + storedItem.name);
+    }
+}
 
     void DropItem()
     {

@@ -5,6 +5,7 @@ TagManager:
   serializedVersion: 3
   tags:
   - Pickup
+  - JumpOrb
   layers:
   - Default
   - TransparentFX
