@@ -14,3 +14,4 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::InventoryItem
   itemName: Test_Inventory
   itemIcon: {fileID: 10905, guid: 0000000000000000f000000000000000, type: 0}
+  prefab: {fileID: 672946020517546132, guid: 2177c7c7f036c49c897c4896f0ec313c, type: 3}
