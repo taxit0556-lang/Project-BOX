@@ -5,8 +5,6 @@ public class PlayerInteract : MonoBehaviour
     public float interactRange = 2f;
     public Transform holdPoint;
 
-    private GameObject storedItem;
-
     void Update()
     {
         if (Input.GetKeyDown(KeyCode.E))
@@ -17,54 +15,60 @@ public class PlayerInteract : MonoBehaviour
 
         if (Input.GetKeyDown(KeyCode.Q))
         {
+            Debug.Log("Q pressed");
             DropItem();
         }
     }
 
     void TryPickup()
     {
-        Debug.Log("TryPickup CALLED");
-        Debug.Log("storedItem: " + storedItem);
+        Collider2D hit = Physics2D.OverlapCircle(transform.position, interactRange);
 
-        if (storedItem != null)
+        if (hit == null)
         {
-            Debug.Log("EXITING because already holding");
+            Debug.Log("Nothing to pick up");
             return;
         }
 
-        // Changed from Raycast to OverlapCircle
-        Collider2D hit = Physics2D.OverlapCircle(transform.position, interactRange);
-
-        if (hit != null && hit.CompareTag("Pickup"))
+        if (!hit.CompareTag("Pickup"))
         {
-            storedItem = hit.gameObject;
-
-            Rigidbody2D rb = storedItem.GetComponent<Rigidbody2D>();
-            if (rb != null)
-                rb.simulated = false;
-
-            storedItem.SetActive(false);
-
-            Debug.Log("Picked up: " + storedItem.name);
+            Debug.Log("Object not tagged as Pickup");
+            return;
         }
+
+        GameObject obj = hit.gameObject;
+
+        PickupItem pickup = obj.GetComponent<PickupItem>();
+
+        if (pickup == null)
+        {
+            Debug.Log("No PickupItem script found!");
+            return;
+        }
+
+        // Add to inventory
+        InventoryManager.instance.AddItem(pickup.itemData);
+
+        Debug.Log("Picked up: " + pickup.itemData.itemName);
+
+        // Remove from world
+        Destroy(obj);
     }
 
     void DropItem()
+{
+    InventoryItem item = InventoryManager.instance.RemoveLastItem();
+
+    if (item == null)
     {
-        if (storedItem == null) return;
-
-        storedItem.SetActive(true);
-        storedItem.transform.position = holdPoint.position;
-
-        Rigidbody2D rb = storedItem.GetComponent<Rigidbody2D>();
-        if (rb != null)
-        {
-            rb.simulated = true;
-            rb.linearVelocity = Vector2.zero;
-        }
-
-        storedItem = null;
+        Debug.Log("No item to drop");
+        return;
     }
+
+    Instantiate(item.prefab, holdPoint.position, Quaternion.identity);
+
+    Debug.Log("Dropped: " + item.itemName);
+}
 
     void OnDrawGizmos()
     {
