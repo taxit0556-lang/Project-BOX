@@ -2,7 +2,7 @@ using UnityEngine;
 using System.Collections;
 using UnityEngine.SceneManagement;
 using UnityEngine.Events;
-
+//TRANSITIONS LOLOLOLOL
 public enum StartTypeTransition
 {
     fadeIn,
