@@ -666,7 +666,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Button
+  m_text: Click for Transition
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
@@ -693,8 +693,8 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 24
-  m_fontSizeBase: 24
+  m_fontSize: 14
+  m_fontSizeBase: 14
   m_fontWeight: 400
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
@@ -1063,7 +1063,7 @@ Transform:
   m_GameObject: {fileID: 929193434}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 11.5, y: 6.7, z: 0}
+  m_LocalPosition: {x: 11.5, y: 6.3, z: 0}
   m_LocalScale: {x: 9.61, y: -1.79, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -1966,33 +1966,30 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 537b2f86e23414280a1aad43415060e5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Player_Movement
-  MoveSpeed: 12
-  jumpingPower: 13
-  CyoteTime: 0
-  jumpBuffering_Window: 0.25
+  moveSpeed: 12
+  acceleration: 120
+  deceleration: 140
+  jumpForce: 16
+  coyoteTime: 0.12
+  jumpBuffer: 0.12
   canJump: 0
   unlockedVirtues: []
-  dashSpeed: 20
+  dashSpeed: 26
   dashTime: 0.2
   dashFreezeTime: 0.05
-  isWallSliding: 0
-  isWallJumping: 0
-  SameWallJumping: 0
-  wallJumpDirection: 0
-  LastTimeWallJumped: 0
-  StartWallJumpTimer: 0
-  wallJumpingPower: {x: 0, y: 0}
-  State: 
-  movement: {x: 0, y: 16}
+  wallJumpForce: {x: 14, y: 18}
+  wallJumpLockTime: 0.18
+  wallStickTime: 0.15
+  wallSlideSpeed: 1.2
+  wallSlideGravity: 0.6
+  groundCheck: {fileID: 564760265}
+  wallCheck: {fileID: 1716348456}
   groundLayer:
     serializedVersion: 2
     m_Bits: 8
-  GroundCheck: {fileID: 564760265}
-  WallLayer:
+  wallLayer:
     serializedVersion: 2
-    m_Bits: 8
-  WallCheck: {fileID: 1716348456}
-  spriteRenderer: {fileID: 1799730986}
+    m_Bits: 0
 --- !u!61 &1799730984
 BoxCollider2D:
   m_ObjectHideFlags: 0
