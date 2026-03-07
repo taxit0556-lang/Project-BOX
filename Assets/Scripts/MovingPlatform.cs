@@ -20,6 +20,8 @@ public class MovingPlatform : MonoBehaviour
     void FixedUpdate()
     {
         transform.position = Vector3.MoveTowards(transform.position, target, speed * Time.fixedDeltaTime);
+        
+        
 
         if (Vector3.Distance(transform.position, target) < 0.05f)
         {

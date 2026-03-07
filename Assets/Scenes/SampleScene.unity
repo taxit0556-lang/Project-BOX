@@ -6092,7 +6092,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4642551278860048990, guid: 4ce40e613a2ce44888c891e46023dc67, type: 3}
       propertyPath: wallLayer.m_Bits
-      value: 72
+      value: 64
       objectReference: {fileID: 0}
     - target: {fileID: 7046778147451083694, guid: 4ce40e613a2ce44888c891e46023dc67, type: 3}
       propertyPath: m_Name

@@ -89,6 +89,11 @@ public class Player_Movement : MonoBehaviour
     {
         if (isDashing) return;
 
+        if (currentPlatform != null)
+{
+        rb.linearVelocity += currentPlatform.PlatformVelocity;
+}
+
         Move();
         Gravity();
     }
