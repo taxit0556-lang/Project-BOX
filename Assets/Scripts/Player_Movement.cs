@@ -12,6 +12,10 @@ public class Player_Movement : MonoBehaviour
     public float coyoteTime = 0.12f;
     public float jumpBuffer = 0.12f;
 
+
+    [Header("Platform")]
+    private MovingPlatform currentPlatform;
+
     float coyoteCounter;
     float jumpBufferCounter;
 
@@ -84,6 +88,11 @@ public class Player_Movement : MonoBehaviour
     void FixedUpdate()
     {
         if (isDashing) return;
+
+        if (currentPlatform != null)
+{
+        rb.linearVelocity += currentPlatform.PlatformVelocity;
+}
 
         Move();
         Gravity();
@@ -272,4 +281,27 @@ public class Player_Movement : MonoBehaviour
             Debug.Log("- " + virtue);
         }
     }
+
+    void OnCollisionEnter2D(Collision2D collision)
+    {
+    MovingPlatform platform = collision.collider.GetComponent<MovingPlatform>();
+
+    if (platform != null)
+    {
+        currentPlatform = platform;
+    }
+    }
+
+void OnCollisionExit2D(Collision2D collision)
+    {
+    MovingPlatform platform = collision.collider.GetComponent<MovingPlatform>();
+
+    if (platform != null)
+    {
+        currentPlatform = null;
+    }
+    }
+
+
+
 }
