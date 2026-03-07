@@ -168,7 +168,7 @@ public class TransitionManager_Base : MonoBehaviour
         localScale = new Vector3(0,0,0);
         Child.transform.localScale = localScale;
 
-        Vector3 WantedSize = new Vector3(100,100,100);
+        Vector3 WantedSize = new Vector3(200,200,200);
 
         LeanTween.scale(Child, WantedSize, TransitionDuration);
         StartCoroutine(WaitTime());
