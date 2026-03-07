@@ -1061,25 +1061,45 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 231190640475569348, guid: 3c7d93950769144a48ad3effa9548943, type: 3}
+      propertyPath: m_Sprite
+      value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: 231190640475569348, guid: 3c7d93950769144a48ad3effa9548943, type: 3}
+      propertyPath: m_WasSpriteAssigned
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 606222490752953922, guid: 3c7d93950769144a48ad3effa9548943, type: 3}
+      propertyPath: Cam
+      value: 
+      objectReference: {fileID: 966310990}
     - target: {fileID: 606222490752953922, guid: 3c7d93950769144a48ad3effa9548943, type: 3}
       propertyPath: Test
       value: 
       objectReference: {fileID: -2413806693520163455, guid: a86470a33a6bf42c4b3595704624658b, type: 3}
     - target: {fileID: 606222490752953922, guid: 3c7d93950769144a48ad3effa9548943, type: 3}
       propertyPath: waitTime
-      value: 2
+      value: 0.4
       objectReference: {fileID: 0}
     - target: {fileID: 606222490752953922, guid: 3c7d93950769144a48ad3effa9548943, type: 3}
       propertyPath: SceneName
       value: LoadThis
       objectReference: {fileID: 0}
     - target: {fileID: 606222490752953922, guid: 3c7d93950769144a48ad3effa9548943, type: 3}
+      propertyPath: endTransition
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 606222490752953922, guid: 3c7d93950769144a48ad3effa9548943, type: 3}
+      propertyPath: startTrantition
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 606222490752953922, guid: 3c7d93950769144a48ad3effa9548943, type: 3}
       propertyPath: transitionAction
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 606222490752953922, guid: 3c7d93950769144a48ad3effa9548943, type: 3}
       propertyPath: TransitionDuration
-      value: 0.5
+      value: 0.6
       objectReference: {fileID: 0}
     - target: {fileID: 1649964914329038421, guid: 3c7d93950769144a48ad3effa9548943, type: 3}
       propertyPath: m_LocalPosition.x
@@ -1127,7 +1147,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8727538191098678303, guid: 3c7d93950769144a48ad3effa9548943, type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -5077,6 +5097,10 @@ PrefabInstance:
     - target: {fileID: 2075821676923845317, guid: 4ce40e613a2ce44888c891e46023dc67, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4642551278860048990, guid: 4ce40e613a2ce44888c891e46023dc67, type: 3}
+      propertyPath: moveSpeed
+      value: 11
       objectReference: {fileID: 0}
     - target: {fileID: 4642551278860048990, guid: 4ce40e613a2ce44888c891e46023dc67, type: 3}
       propertyPath: wallLayer.m_Bits

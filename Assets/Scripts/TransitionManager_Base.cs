@@ -2,7 +2,7 @@ using UnityEngine;
 using System.Collections;
 using UnityEngine.SceneManagement;
 using UnityEngine.Events;
-//TRANSITIONS LOLOLOLOL
+
 public enum StartTypeTransition
 {
     fadeIn,
@@ -38,6 +38,8 @@ public class TransitionManager_Base : MonoBehaviour
     SpriteRenderer spriteRenderer;
     Color color;
 
+    public GameObject Cam;
+
 
     [Header("Settings")]
     public Sprite Test;
@@ -45,6 +47,7 @@ public class TransitionManager_Base : MonoBehaviour
     public float TransitionDuration;
     public float waitTime;
     public string SceneName;
+    public string State;
     
 
     Vector3 localScale;
@@ -70,6 +73,8 @@ public class TransitionManager_Base : MonoBehaviour
     void Update()
     {
         color = spriteRenderer.color;
+
+        Child.transform.position = new Vector2(Cam.transform.position.x, Cam.transform.position.y);
     }
 
     void LoadScene()
@@ -79,6 +84,7 @@ public class TransitionManager_Base : MonoBehaviour
 
     public void PlayTransition()
     {
+        State = "start";
         spriteRenderer.sprite = Test;
         if(!TransitionPlaying)
             color.a = 1;
@@ -96,6 +102,7 @@ public class TransitionManager_Base : MonoBehaviour
     //Second Part of the transition
     public void EndTransition()
     {
+        State = "2Part";
         if(transitionAction.Equals(TransitionAction.loadScene))
             LoadScene();
 
@@ -109,6 +116,7 @@ public class TransitionManager_Base : MonoBehaviour
     
     void StopTransition()
     {
+        State = "done";
         TransitionPlaying = false;
     }
 
@@ -119,9 +127,15 @@ public class TransitionManager_Base : MonoBehaviour
         EndTransition();
     }
 
+    IEnumerator MiddleState()
+    {
+        yield return new WaitForSeconds(waitTime);
+        State = "Middle";
+    }
+
     void FadeIn()
     {
-        Child.transform.position = new Vector2(0, 0);
+        Child.transform.position = new Vector2(Cam.transform.position.x + 0, 0);
 
         color.a = 0;
         spriteRenderer.color = color;
@@ -130,12 +144,13 @@ public class TransitionManager_Base : MonoBehaviour
         spriteRenderer.color = color;
         localScale = Child.transform.localScale;
 
-        localScale = new Vector3(50,50,50);
+        localScale = new Vector3(100,70,50);
 
         Child.transform.localScale = localScale;
 
         LeanTween.alpha(Child, 1, TransitionDuration);
         StartCoroutine(WaitTime());
+        StartCoroutine(MiddleState());
     }
     void FadeAway()
     {
@@ -144,7 +159,7 @@ public class TransitionManager_Base : MonoBehaviour
 
     void Grow()
     {
-        Child.transform.position = new Vector2(0, 0);
+        Child.transform.position = new Vector2(Cam.transform.position.x + 0, 0);
 
         color.a = 1;
         spriteRenderer.color = color;
@@ -153,15 +168,16 @@ public class TransitionManager_Base : MonoBehaviour
         localScale = new Vector3(0,0,0);
         Child.transform.localScale = localScale;
 
-        Vector3 WantedSize = new Vector3(50,50,50);
+        Vector3 WantedSize = new Vector3(100,100,100);
 
         LeanTween.scale(Child, WantedSize, TransitionDuration);
         StartCoroutine(WaitTime());
+        StartCoroutine(MiddleState());
     }
 
     void Srink()
     {
-        Child.transform.position = new Vector2(0, 0);
+        Child.transform.position = new Vector2(Cam.transform.position.x + 0, 0);
         Vector3 WantedSize = new Vector3(0,0,0);
 
         LeanTween.scale(Child, WantedSize, TransitionDuration).setOnComplete(StopTransition);
@@ -170,7 +186,7 @@ public class TransitionManager_Base : MonoBehaviour
 
     void Slide()
     {
-        Child.transform.position = new Vector2(-8.74f,3);
+        Child.transform.position = new Vector2(Cam.transform.position.x + -8.74f,3);
 
         color.a = 1;
         spriteRenderer.color = color;
@@ -179,10 +195,11 @@ public class TransitionManager_Base : MonoBehaviour
         localScale = new Vector3(1,20,1);
         Child.transform.localScale = localScale;
 
-        Vector3 WantedSize = new Vector3(37,20,1);
+        Vector3 WantedSize = new Vector3(37,50,1);
 
         LeanTween.scale(Child, WantedSize, TransitionDuration).setOnComplete(SlideDone);
         StartCoroutine(WaitTime());
+        StartCoroutine(MiddleState());
     }
     void SlideDone()
     {
