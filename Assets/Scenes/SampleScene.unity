@@ -395,6 +395,66 @@ SpriteRenderer:
   m_SpriteTileMode: 0
   m_WasSpriteAssigned: 1
   m_SpriteSortPoint: 0
+--- !u!1001 &427903558
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 3658776338987277005, guid: f80a269f18f5a45d594c8f4225709c50, type: 3}
+      propertyPath: m_Name
+      value: Enemy
+      objectReference: {fileID: 0}
+    - target: {fileID: 7805642462739572724, guid: f80a269f18f5a45d594c8f4225709c50, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: -18.49603
+      objectReference: {fileID: 0}
+    - target: {fileID: 7805642462739572724, guid: f80a269f18f5a45d594c8f4225709c50, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: -0.12874
+      objectReference: {fileID: 0}
+    - target: {fileID: 7805642462739572724, guid: f80a269f18f5a45d594c8f4225709c50, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7805642462739572724, guid: f80a269f18f5a45d594c8f4225709c50, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7805642462739572724, guid: f80a269f18f5a45d594c8f4225709c50, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7805642462739572724, guid: f80a269f18f5a45d594c8f4225709c50, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7805642462739572724, guid: f80a269f18f5a45d594c8f4225709c50, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7805642462739572724, guid: f80a269f18f5a45d594c8f4225709c50, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7805642462739572724, guid: f80a269f18f5a45d594c8f4225709c50, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7805642462739572724, guid: f80a269f18f5a45d594c8f4225709c50, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 3658776338987277005, guid: f80a269f18f5a45d594c8f4225709c50, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 2113433538}
+  m_SourcePrefab: {fileID: 100100000, guid: f80a269f18f5a45d594c8f4225709c50, type: 3}
 --- !u!1001 &508713833
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -2227,6 +2287,26 @@ BoxCollider2D:
   m_AutoTiling: 0
   m_Size: {x: 1, y: 1}
   m_EdgeRadius: 0
+--- !u!1 &2113433537 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 3658776338987277005, guid: f80a269f18f5a45d594c8f4225709c50, type: 3}
+  m_PrefabInstance: {fileID: 427903558}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &2113433538
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2113433537}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1ba1f4fb1ece740b98fb0f6a9cfac61e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::EnemyAI
+  player: {fileID: 309396886617288790}
+  speed: 6
+  chaseRange: 8
 --- !u!1001 &309396886617288789
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -2295,6 +2375,7 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 2075821676923845317, guid: 4ce40e613a2ce44888c891e46023dc67, type: 3}
   m_PrefabInstance: {fileID: 309396886617288789}
   m_PrefabAsset: {fileID: 0}
+<<<<<<< HEAD
 --- !u!61 &309396886617288796
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -2439,6 +2520,8 @@ MonoBehaviour:
   speed: 3
   chaseRange: 8
   Health: 100
+=======
+>>>>>>> 6277b1878ca4b46a4668f08151c711cbd1df4c36
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
@@ -2451,4 +2534,4 @@ SceneRoots:
   - {fileID: 508713833}
   - {fileID: 2072248991}
   - {fileID: 2069176015}
-  - {fileID: 5960621051618141260}
+  - {fileID: 427903558}
