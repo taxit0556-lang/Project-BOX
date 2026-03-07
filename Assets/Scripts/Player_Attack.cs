@@ -8,44 +8,49 @@ public class Player_Attack : MonoBehaviour
     private bool PlayerAttacking;
     private bool PlayerHitSomething;
 
-    EnemyAI EnemyHit;
+    EnemyHealth EnemyHit;
+
+    public int damage = 1;
 
     void Start()
     {
         PlayerAttacking = false;
+        boxCollider2D.enabled = false;
     }
 
     IEnumerator Attacking()
     {
         PlayerAttacking = true;
-        yield return new WaitForSeconds(0.5f);
-        PlayerAttacking = false;
         PlayerHitSomething = false;
+
+        yield return new WaitForSeconds(0.5f);
+
+        PlayerAttacking = false;
     }
     
     void Update()
     {
         if (PlayerAttacking)
-        {
             boxCollider2D.enabled = true;
-        }
         else
             boxCollider2D.enabled = false;
 
-
         if(Input.GetMouseButtonDown(0) && !PlayerAttacking)
-            StartCoroutine("Attacking");
+            StartCoroutine(Attacking());
     }
 
     void OnTriggerEnter2D(Collider2D other)
     {
-        if (other.gameObject.CompareTag("Enemy"))
+        if(other.CompareTag("Enemy") && !PlayerHitSomething)
         {
-            if (!PlayerHitSomething)
+            EnemyHit = other.GetComponent<EnemyHealth>();
+
+            if(EnemyHit != null)
             {
-                EnemyHit = other.gameObject.GetComponent<EnemyAI>();
                 Debug.Log("HitEnemy");
-                EnemyHit.OnHit(10);
+
+                EnemyHit.TakeDamage(damage, transform);
+
                 PlayerHitSomething = true;
             }
         }

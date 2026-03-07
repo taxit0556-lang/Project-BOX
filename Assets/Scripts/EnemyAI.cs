@@ -15,7 +15,7 @@ public class EnemyAI : MonoBehaviour
         rb = GetComponent<Rigidbody2D>();
     }
 
-    public float Health;
+    
 
     void Start()
     {
@@ -42,14 +42,10 @@ public class EnemyAI : MonoBehaviour
         }
 
 
-        if(Health <= 0)
-            Destroy(gameObject);
+        
     }
 
-    public void OnHit(float HitAmount)
-    {
-        Health -= HitAmount;
-    }
+   
 
     void FindPlayer()
     {
