@@ -2279,6 +2279,11 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 4ce40e613a2ce44888c891e46023dc67, type: 3}
+--- !u!4 &309396886617288790 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 2075821676923845317, guid: 4ce40e613a2ce44888c891e46023dc67, type: 3}
+  m_PrefabInstance: {fileID: 309396886617288789}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &5960621051618141260
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -2334,8 +2339,31 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 3658776338987277005, guid: f80a269f18f5a45d594c8f4225709c50, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 5960621051618141262}
   m_SourcePrefab: {fileID: 100100000, guid: f80a269f18f5a45d594c8f4225709c50, type: 3}
+--- !u!1 &5960621051618141261 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 3658776338987277005, guid: f80a269f18f5a45d594c8f4225709c50, type: 3}
+  m_PrefabInstance: {fileID: 5960621051618141260}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &5960621051618141262
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5960621051618141261}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1ba1f4fb1ece740b98fb0f6a9cfac61e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::EnemyAI
+  player: {fileID: 309396886617288790}
+  speed: 3
+  chaseRange: 8
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
