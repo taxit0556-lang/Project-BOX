@@ -6,8 +6,6 @@ public class Player_Movement : MonoBehaviour
 {
     [Header("Movement")]
     public float moveSpeed = 8f;
-    public float acceleration = 60f;
-    public float deceleration = 80f;
 
     [Header("Jump")]
     public float jumpForce = 14f;
@@ -18,7 +16,7 @@ public class Player_Movement : MonoBehaviour
     float jumpBufferCounter;
 
     [Header("Jump Lock")]
-    public bool canJump = false;
+    public bool canJump = true;
 
     [Header("Virtues")]
     public List<string> unlockedVirtues = new List<string>();
@@ -27,26 +25,25 @@ public class Player_Movement : MonoBehaviour
     public float dashSpeed = 22f;
     public float dashTime = 0.18f;
     public float dashFreezeTime = 0.05f;
+
     bool isDashing;
     bool canDash = true;
 
     [Header("Wall")]
-
     public Vector2 wallJumpForce = new Vector2(12f,16f);
     public float wallJumpLockTime = 0.18f;
 
-    public float wallStickTime = 0.15f;
+    bool isWallJumping;
+    float wallJumpLockCounter;
 
-private float wallStickCounter;
+    public float wallStickTime = 0.15f;
+    float wallStickCounter;
 
     [Header("Wall Slide")]
-    public float wallSlideSpeed = 1.5f;   // how slow you fall
-    public float wallSlideGravity = 0.5f; // gravity while sliding  
+    public float wallSlideSpeed = 1.5f;
+    public float wallSlideGravity = 0.5f;
 
     bool isWallSliding;
-    bool isWallJumping;
-
-    float wallJumpLockCounter;
 
     [Header("Checks")]
     [SerializeField] Transform groundCheck;
@@ -97,12 +94,14 @@ private float wallStickCounter;
         if (Input.GetKeyDown(KeyCode.Space))
             jumpBufferCounter = jumpBuffer;
 
-        if (jumpBufferCounter > 0 && coyoteCounter > 0 && canJump)
+        // NORMAL JUMP
+        if (jumpBufferCounter > 0 && coyoteCounter > 0 && canJump && !isWallSliding)
         {
             Jump();
         }
 
-        if (Input.GetKeyDown(KeyCode.Space) && isWallSliding && canJump)
+        // WALL JUMP
+        if (Input.GetKeyDown(KeyCode.Space) && isWallSliding && !IsGrounded())
         {
             WallJump();
         }
@@ -114,19 +113,21 @@ private float wallStickCounter;
     }
 
     void Move()
-{
-    if (isWallJumping)
     {
-        wallJumpLockCounter -= Time.fixedDeltaTime;
-        if (wallJumpLockCounter <= 0)
-            isWallJumping = false;
-        return;
+        if (isWallJumping)
+        {
+            wallJumpLockCounter -= Time.fixedDeltaTime;
+
+            if (wallJumpLockCounter <= 0)
+                isWallJumping = false;
+
+            return;
+        }
+
+        float targetSpeed = horizontal * moveSpeed;
+
+        rb.linearVelocity = new Vector2(targetSpeed, rb.linearVelocity.y);
     }
-
-    float targetSpeed = horizontal * moveSpeed;
-
-    rb.linearVelocity = new Vector2(targetSpeed, rb.linearVelocity.y);
-}
 
     void Jump()
     {
@@ -141,7 +142,10 @@ private float wallStickCounter;
     void WallJump()
     {
         Debug.Log("WallJumped");
+
         isWallJumping = true;
+        isWallSliding = false;
+
         wallJumpLockCounter = wallJumpLockTime;
 
         float direction = -transform.localScale.x;
@@ -151,42 +155,43 @@ private float wallStickCounter;
         rb.AddForce(new Vector2(direction * wallJumpForce.x, wallJumpForce.y),ForceMode2D.Impulse);
     }
 
-  void HandleWallSlide()
-{
-    if (IsWalled() && !IsGrounded())
+    void HandleWallSlide()
     {
-        if (horizontal != 0)
+        if (isWallJumping) return;
+
+        if (IsWalled() && !IsGrounded() && rb.linearVelocity.y < 0)
         {
-            Debug.Log("WallSliding");
-            isWallSliding = true;
-            wallStickCounter = wallStickTime;
+            if (horizontal != 0)
+            {
+                isWallSliding = true;
+                wallStickCounter = wallStickTime;
+            }
+            else
+            {
+                wallStickCounter -= Time.deltaTime;
+
+                if (wallStickCounter > 0)
+                    isWallSliding = true;
+                else
+                    isWallSliding = false;
+            }
         }
         else
         {
-            Debug.Log("NotWallSliding");
-            wallStickCounter -= Time.deltaTime;
-
-            if (wallStickCounter > 0)
-                isWallSliding = true;
-            else
-                isWallSliding = false;
+            isWallSliding = false;
         }
-    }
-    else
-    {
-        isWallSliding = false;
-    }
 
-    if (isWallSliding)
-    {
-        rb.gravityScale = wallSlideGravity;
-
-        if (rb.linearVelocity.y < -wallSlideSpeed)
+        if (isWallSliding)
         {
-            rb.linearVelocity = new Vector2(rb.linearVelocity.x, -wallSlideSpeed);
+            rb.gravityScale = wallSlideGravity;
+
+            if (rb.linearVelocity.y < -wallSlideSpeed)
+            {
+                rb.linearVelocity = new Vector2(rb.linearVelocity.x,-wallSlideSpeed);
+            }
         }
     }
-}
+
     IEnumerator Dash()
     {
         canDash = false;
@@ -229,14 +234,14 @@ private float wallStickCounter;
 
     void Gravity()
     {
-    if (isWallSliding) return;
+        if (isWallSliding) return;
 
-    if (rb.linearVelocity.y < 0)
-        rb.gravityScale = 6f;
-    else if (rb.linearVelocity.y > 0 && !Input.GetKey(KeyCode.Space))
-        rb.gravityScale = 5f;
-    else
-        rb.gravityScale = 3f;
+        if (rb.linearVelocity.y < 0)
+            rb.gravityScale = 6f;
+        else if (rb.linearVelocity.y > 0 && !Input.GetKey(KeyCode.Space))
+            rb.gravityScale = 5f;
+        else
+            rb.gravityScale = 3f;
     }
 
     void Flip()
