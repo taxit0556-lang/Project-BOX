@@ -3,17 +3,20 @@ using UnityEngine;
 public class EnemyAI : MonoBehaviour
 {
     public Transform player;
+
     public float speed = 3f;
     public float chaseRange = 8f;
 
-    private Rigidbody2D rb;
+    Rigidbody2D rb;
 
     void Start()
     {
         rb = GetComponent<Rigidbody2D>();
 
         if(player == null)
+        {
             player = GameObject.FindGameObjectWithTag("Player").transform;
+        }
     }
 
     void FixedUpdate()
@@ -23,11 +26,8 @@ public class EnemyAI : MonoBehaviour
         if(distance < chaseRange)
         {
             Vector2 direction = (player.position - transform.position).normalized;
+
             rb.linearVelocity = new Vector2(direction.x * speed, rb.linearVelocity.y);
-        }
-        else
-        {
-            rb.linearVelocity = new Vector2(0, rb.linearVelocity.y);
         }
     }
 }
