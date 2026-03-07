@@ -1210,7 +1210,7 @@ PrefabInstance:
     - target: {fileID: 606222490752953922, guid: 3c7d93950769144a48ad3effa9548943, type: 3}
       propertyPath: Cam
       value: 
-      objectReference: {fileID: 966310990}
+      objectReference: {fileID: 1241488129}
     - target: {fileID: 606222490752953922, guid: 3c7d93950769144a48ad3effa9548943, type: 3}
       propertyPath: Test
       value: 
@@ -1237,7 +1237,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 606222490752953922, guid: 3c7d93950769144a48ad3effa9548943, type: 3}
       propertyPath: TransitionDuration
-      value: 0.6
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 1649964914329038421, guid: 3c7d93950769144a48ad3effa9548943, type: 3}
       propertyPath: m_LocalPosition.x
@@ -5256,6 +5256,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 7046778147451083694, guid: 4ce40e613a2ce44888c891e46023dc67, type: 3}
       insertIndex: -1
       addedObject: {fileID: 309396886617288802}
+    - targetCorrespondingSourceObject: {fileID: 7046778147451083694, guid: 4ce40e613a2ce44888c891e46023dc67, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 309396886617288808}
   m_SourcePrefab: {fileID: 100100000, guid: 4ce40e613a2ce44888c891e46023dc67, type: 3}
 --- !u!114 &309396886617288796
 MonoBehaviour:
@@ -5322,6 +5325,25 @@ BoxCollider2D:
   m_AutoTiling: 0
   m_Size: {x: 1, y: 1}
   m_EdgeRadius: 0
+--- !u!212 &309396886617288807 stripped
+SpriteRenderer:
+  m_CorrespondingSourceObject: {fileID: 2202675088727704261, guid: 4ce40e613a2ce44888c891e46023dc67, type: 3}
+  m_PrefabInstance: {fileID: 309396886617288789}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &309396886617288808
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 966310990}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e32447ba96b8246058876a30774dc304, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: '::'
+  spriteRenderer: {fileID: 309396886617288807}
+  CheckPoint: {x: 0, y: 0}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
