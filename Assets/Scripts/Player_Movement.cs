@@ -140,6 +140,7 @@ private float wallStickCounter;
 
     void WallJump()
     {
+        Debug.Log("WallJumped");
         isWallJumping = true;
         wallJumpLockCounter = wallJumpLockTime;
 
@@ -156,11 +157,13 @@ private float wallStickCounter;
     {
         if (horizontal != 0)
         {
+            Debug.Log("WallSliding");
             isWallSliding = true;
             wallStickCounter = wallStickTime;
         }
         else
         {
+            Debug.Log("NotWallSliding");
             wallStickCounter -= Time.deltaTime;
 
             if (wallStickCounter > 0)

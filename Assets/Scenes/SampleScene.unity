@@ -1989,7 +1989,7 @@ MonoBehaviour:
     m_Bits: 8
   wallLayer:
     serializedVersion: 2
-    m_Bits: 0
+    m_Bits: 8
 --- !u!61 &1799730984
 BoxCollider2D:
   m_ObjectHideFlags: 0
