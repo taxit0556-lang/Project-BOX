@@ -50,4 +50,10 @@ public class PlayerHealth : MonoBehaviour
 
         // Later addding respawn
     }
+
+
+    public bool CanHeal()
+    {   //does not allow player to cap health when he eats heal.
+        return currentHealth < maxHealth;
+    }
 }
