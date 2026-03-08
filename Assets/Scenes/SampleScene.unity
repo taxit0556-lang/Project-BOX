@@ -2217,6 +2217,14 @@ PrefabInstance:
     m_TransformParent: {fileID: 0}
     m_Modifications:
     - target: {fileID: 301255533312629760, guid: f80a269f18f5a45d594c8f4225709c50, type: 3}
+      propertyPath: pathA
+      value: 
+      objectReference: {fileID: 1686860748}
+    - target: {fileID: 301255533312629760, guid: f80a269f18f5a45d594c8f4225709c50, type: 3}
+      propertyPath: pathB
+      value: 
+      objectReference: {fileID: 591312904}
+    - target: {fileID: 301255533312629760, guid: f80a269f18f5a45d594c8f4225709c50, type: 3}
       propertyPath: speed
       value: 6
       objectReference: {fileID: 0}
@@ -2888,6 +2896,37 @@ Transform:
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: -302.28, y: -7.62, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &591312903
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 591312904}
+  m_Layer: 0
+  m_Name: PointB
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &591312904
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 591312903}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: -30.4, y: -6.23, z: 0}
+  m_LocalScale: {x: 1, y: 1.375, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
@@ -14409,6 +14448,37 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1647820664}
   m_CullTransparentMesh: 1
+--- !u!1 &1686860747
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1686860748}
+  m_Layer: 0
+  m_Name: PointA
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1686860748
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1686860747}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: -19.75, y: -6.23, z: 0}
+  m_LocalScale: {x: 1, y: 1.375, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1725491138
 GameObject:
   m_ObjectHideFlags: 0
@@ -19648,6 +19718,8 @@ GameObject:
   - component: {fileID: 2081228359}
   - component: {fileID: 2081228358}
   - component: {fileID: 2081228360}
+  - component: {fileID: 2081228361}
+  - component: {fileID: 2081228362}
   m_Layer: 3
   m_Name: Ground
   m_TagString: Untagged
@@ -19775,6 +19847,38 @@ BoxCollider2D:
   m_AutoTiling: 0
   m_Size: {x: 1, y: 1}
   m_EdgeRadius: 0
+--- !u!114 &2081228361
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2081228357}
+  m_Enabled: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9809bf1345abc5648af68b3a82653f08, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: NavMeshPlus::NavMeshPlus.Components.NavMeshModifier
+  m_OverrideArea: 1
+  m_Area: 0
+  m_IgnoreFromBuild: 0
+  m_AffectedAgents: ffffffff
+--- !u!114 &2081228362
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2081228357}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7fa0352a4d56abd42ad2fc69deb72448, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: NavMeshPlus::NavMeshPlus.Components.NavMeshModifierVolume
+  m_Size: {x: 4, y: 0.24, z: 4}
+  m_Center: {x: 0, y: 0.45, z: -0.00000047683716}
+  m_Area: 0
+  m_AffectedAgents: ffffffff
 --- !u!1 &2142136923
 GameObject:
   m_ObjectHideFlags: 0
@@ -20146,3 +20250,5 @@ SceneRoots:
   - {fileID: 2069176015}
   - {fileID: 731008495}
   - {fileID: 1725491140}
+  - {fileID: 1686860748}
+  - {fileID: 591312904}
