@@ -168,10 +168,10 @@ TextureImporter:
       customData: 
       outline: []
       physicsShape:
-      - - {x: 128, y: 95}
-        - {x: -89, y: 96}
-        - {x: -92, y: -129}
-        - {x: 129, y: -129}
+      - - {x: 128, y: 128}
+        - {x: -128, y: 128}
+        - {x: -128, y: -128}
+        - {x: 128, y: -128}
       tessellationDetail: 0
       bones: []
       spriteID: 80b91d69007c6c8a0800000000000000
@@ -194,8 +194,8 @@ TextureImporter:
       customData: 
       outline: []
       physicsShape:
-      - - {x: 129, y: 89}
-        - {x: -129, y: 90}
+      - - {x: 128, y: 128}
+        - {x: -128, y: 128}
         - {x: -128, y: -128}
         - {x: 128, y: -128}
       tessellationDetail: 0
@@ -220,10 +220,10 @@ TextureImporter:
       customData: 
       outline: []
       physicsShape:
-      - - {x: 89, y: 90}
-        - {x: -129, y: 91}
-        - {x: -129, y: -129}
-        - {x: 92, y: -129}
+      - - {x: 128, y: 128}
+        - {x: -128, y: 128}
+        - {x: -128, y: -128}
+        - {x: 128, y: -128}
       tessellationDetail: 0
       bones: []
       spriteID: abb2946ead9633600800000000000000
@@ -273,8 +273,8 @@ TextureImporter:
       outline: []
       physicsShape:
       - - {x: 128, y: 128}
-        - {x: -88, y: 128}
-        - {x: -92, y: -129}
+        - {x: -128, y: 128}
+        - {x: -128, y: -128}
         - {x: 128, y: -128}
       tessellationDetail: 0
       bones: []
@@ -289,7 +289,7 @@ TextureImporter:
       rect:
         serializedVersion: 2
         x: 303
-        y: 623
+        y: 626
         width: 258
         height: 258
       alignment: 0
@@ -324,10 +324,10 @@ TextureImporter:
       customData: 
       outline: []
       physicsShape:
-      - - {x: 92, y: 129}
+      - - {x: 128, y: 128}
         - {x: -128, y: 128}
         - {x: -128, y: -128}
-        - {x: 94, y: -129}
+        - {x: 128, y: -128}
       tessellationDetail: 0
       bones: []
       spriteID: d49c4c8a858d726d0800000000000000
@@ -376,10 +376,10 @@ TextureImporter:
       customData: 
       outline: []
       physicsShape:
-      - - {x: 129, y: 129}
-        - {x: -91, y: 127}
-        - {x: -92, y: -91}
-        - {x: 129, y: -90}
+      - - {x: 128, y: 128}
+        - {x: -128, y: 128}
+        - {x: -128, y: -128}
+        - {x: 128, y: -128}
       tessellationDetail: 0
       bones: []
       spriteID: 3f47e04402df6f960800000000000000
@@ -428,10 +428,10 @@ TextureImporter:
       customData: 
       outline: []
       physicsShape:
-      - - {x: 91, y: 129}
+      - - {x: 128, y: 128}
         - {x: -128, y: 128}
-        - {x: -129, y: -87}
-        - {x: 92, y: -86}
+        - {x: -128, y: -128}
+        - {x: 128, y: -128}
       tessellationDetail: 0
       bones: []
       spriteID: b7c29502d1b634af0800000000000000
@@ -480,10 +480,10 @@ TextureImporter:
       customData: 
       outline: []
       physicsShape:
-      - - {x: 129, y: 105}
-        - {x: -85, y: 104}
-        - {x: -87, y: -111}
-        - {x: 129, y: -110}
+      - - {x: 128, y: 128}
+        - {x: -128, y: 128}
+        - {x: -128, y: -128}
+        - {x: 128, y: -128}
       tessellationDetail: 0
       bones: []
       spriteID: 5bcf44f9943cbc2c0800000000000000
@@ -506,10 +506,11 @@ TextureImporter:
       customData: 
       outline: []
       physicsShape:
-      - - {x: 128, y: 110}
-        - {x: -128, y: 108}
-        - {x: -127, y: -105}
-        - {x: 129, y: -105}
+      - - {x: 128, y: 128}
+        - {x: -128, y: 128}
+        - {x: -129, y: -19}
+        - {x: -128, y: -128}
+        - {x: 128, y: -128}
       tessellationDetail: 0
       bones: []
       spriteID: 5559112789eb9bf90800000000000000
@@ -532,10 +533,10 @@ TextureImporter:
       customData: 
       outline: []
       physicsShape:
-      - - {x: 89, y: 107}
-        - {x: -129, y: 107}
-        - {x: -128, y: -106}
-        - {x: 91, y: -108}
+      - - {x: 128, y: 128}
+        - {x: -128, y: 128}
+        - {x: -128, y: -128}
+        - {x: 128, y: -128}
       tessellationDetail: 0
       bones: []
       spriteID: 9c5dd81ecf884c580800000000000000

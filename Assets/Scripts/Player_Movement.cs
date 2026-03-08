@@ -6,6 +6,8 @@ public class Player_Movement : MonoBehaviour
 {
     [Header("Movement")]
     public float moveSpeed = 8f;
+    public ParticleSystem TopSmokeFX;
+    public ParticleSystem BottomSmokeFX;
 
     [Header("Jump")]
     public float jumpForce = 14f;
@@ -61,6 +63,12 @@ public class Player_Movement : MonoBehaviour
 
     float horizontal;
 
+    [Header("Other")]
+    [SerializeField] AudioSource audioSource;
+    public AudioClip DashEffect;
+    public AudioClip WalkingEffect;
+
+
     void Start()
     {
         rb = GetComponent<Rigidbody2D>();
@@ -83,6 +91,8 @@ public class Player_Movement : MonoBehaviour
         {
             ShowVirtues();
         }
+        //if(horizontal != 0 && !audioSource.isPlaying && IsGrounded())
+            //audioSource.PlayOneShot(WalkingEffect, 0.5f);
     }
 
     void FixedUpdate()
@@ -140,16 +150,20 @@ public class Player_Movement : MonoBehaviour
 
     void Jump()
     {
+        Debug.Log("RunningJump");
         jumpBufferCounter = 0;
         coyoteCounter = 0;
 
         rb.linearVelocity = new Vector2(rb.linearVelocity.x,0);
 
         rb.AddForce(Vector2.up * jumpForce,ForceMode2D.Impulse);
+
+        BottomSmokeFX.Play();
     }
 
     void WallJump()
     {
+        Debug.Log("RunningWallJump");
         Debug.Log("WallJumped");
 
         isWallJumping = true;
@@ -160,6 +174,7 @@ public class Player_Movement : MonoBehaviour
         float direction = -transform.localScale.x;
 
         rb.linearVelocity = Vector2.zero;
+        BottomSmokeFX.Play();
 
         rb.AddForce(new Vector2(direction * wallJumpForce.x, wallJumpForce.y),ForceMode2D.Impulse);
     }
@@ -203,6 +218,10 @@ public class Player_Movement : MonoBehaviour
 
     IEnumerator Dash()
     {
+        audioSource.PlayOneShot(DashEffect, 1.0f);
+
+        Debug.Log("RunningDash");
+        BottomSmokeFX.Play();
         canDash = false;
         isDashing = true;
 
@@ -256,10 +275,14 @@ public class Player_Movement : MonoBehaviour
     void Flip()
     {
         if (horizontal > 0)
+        {
             transform.localScale = new Vector3(1,1,1);
+        }
 
         if (horizontal < 0)
+        {
             transform.localScale = new Vector3(-1,1,1);
+        }
     }
 
     bool IsGrounded()

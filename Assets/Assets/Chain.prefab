@@ -120,7 +120,7 @@ Rigidbody2D:
   m_Interpolate: 0
   m_SleepingMode: 1
   m_CollisionDetection: 1
-  m_Constraints: 4
+  m_Constraints: 0
 --- !u!233 &5441988769000804528
 HingeJoint2D:
   m_ObjectHideFlags: 0
@@ -313,7 +313,7 @@ Rigidbody2D:
   m_Interpolate: 0
   m_SleepingMode: 1
   m_CollisionDetection: 1
-  m_Constraints: 4
+  m_Constraints: 0
 --- !u!233 &4502677888427223852
 HingeJoint2D:
   m_ObjectHideFlags: 0
@@ -506,7 +506,7 @@ Rigidbody2D:
   m_Interpolate: 0
   m_SleepingMode: 1
   m_CollisionDetection: 1
-  m_Constraints: 4
+  m_Constraints: 0
 --- !u!233 &5393771866252899632
 HingeJoint2D:
   m_ObjectHideFlags: 0
@@ -699,7 +699,7 @@ Rigidbody2D:
   m_Interpolate: 0
   m_SleepingMode: 1
   m_CollisionDetection: 1
-  m_Constraints: 4
+  m_Constraints: 0
 --- !u!233 &335014289327518626
 HingeJoint2D:
   m_ObjectHideFlags: 0
@@ -892,7 +892,7 @@ Rigidbody2D:
   m_Interpolate: 0
   m_SleepingMode: 1
   m_CollisionDetection: 1
-  m_Constraints: 4
+  m_Constraints: 0
 --- !u!233 &7252042166122362074
 HingeJoint2D:
   m_ObjectHideFlags: 0
@@ -1085,7 +1085,7 @@ Rigidbody2D:
   m_Interpolate: 0
   m_SleepingMode: 1
   m_CollisionDetection: 1
-  m_Constraints: 4
+  m_Constraints: 0
 --- !u!233 &7169474066002569597
 HingeJoint2D:
   m_ObjectHideFlags: 0
@@ -1284,7 +1284,7 @@ Rigidbody2D:
   m_Interpolate: 0
   m_SleepingMode: 1
   m_CollisionDetection: 0
-  m_Constraints: 7
+  m_Constraints: 3
 --- !u!233 &1176156605525027394
 HingeJoint2D:
   m_ObjectHideFlags: 0
