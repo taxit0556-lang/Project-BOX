@@ -5,8 +5,8 @@ public class EnemyAI : MonoBehaviour
     [Header("References")]
     private Transform player;
     private Rigidbody2D rb;
-
     public Transform Target;
+    public Enemy_Attack enemy_Attack;
 
     [Header("Movement")]
     public float speed = 3f;
@@ -95,6 +95,7 @@ public class EnemyAI : MonoBehaviour
 
     void ChasePlayer()
     {
+        enemy_Attack.BeginAttackCycle(10,100,0);
         Vector2 direction = (player.position - transform.position).normalized;
         rb.linearVelocity = new Vector2(direction.x * speed, rb.linearVelocity.y);
     }

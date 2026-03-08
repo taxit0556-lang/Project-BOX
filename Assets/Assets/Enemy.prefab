@@ -14,6 +14,7 @@ GameObject:
   - component: {fileID: 6838586347600762799}
   - component: {fileID: 301255533312629760}
   - component: {fileID: 2178599897423024364}
+  - component: {fileID: 1754408266416781079}
   m_Layer: 0
   m_Name: Enemy
   m_TagString: Untagged
@@ -193,3 +194,44 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::EnemyHealth
   maxHealth: 25
+--- !u!114 &1754408266416781079
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3658776338987277005}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f29a37d5c955842e3afb53347b0b4dc7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: '::'
+  PlayerHealth: 100
+  PlayerMaxHealth: 100
+  PlayerDefense: 0
+  Tokens: 0
+  Shop:
+  - Dart
+  - Light Attack
+  - Heavy Attack
+  - Special Attack
+  Cost:
+  - 1
+  - 2
+  - 4
+  - 7
+  Damage:
+  - 5
+  - 10
+  - 30
+  - 45
+  Cooldown:
+  - 0.5
+  - 1
+  - 2
+  - 3
+  IsRanged: 01000001
+  IsAerial: 00000100
+  HasKnockback: 00010100
+  TargetDPT: 0
+  QueuedAttacks: []

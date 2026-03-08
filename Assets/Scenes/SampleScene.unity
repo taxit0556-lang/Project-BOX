@@ -2236,9 +2236,17 @@ PrefabInstance:
       propertyPath: chaseRange
       value: 15
       objectReference: {fileID: 0}
+    - target: {fileID: 301255533312629760, guid: f80a269f18f5a45d594c8f4225709c50, type: 3}
+      propertyPath: enemy_Attack
+      value: 
+      objectReference: {fileID: 1997963675}
     - target: {fileID: 3658776338987277005, guid: f80a269f18f5a45d594c8f4225709c50, type: 3}
       propertyPath: m_Name
       value: Enemy
+      objectReference: {fileID: 0}
+    - target: {fileID: 3658776338987277005, guid: f80a269f18f5a45d594c8f4225709c50, type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 6838586347600762799, guid: f80a269f18f5a45d594c8f4225709c50, type: 3}
       propertyPath: m_Constraints
@@ -2287,10 +2295,7 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents:
-    - targetCorrespondingSourceObject: {fileID: 3658776338987277005, guid: f80a269f18f5a45d594c8f4225709c50, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 1997963680}
+    m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: f80a269f18f5a45d594c8f4225709c50, type: 3}
 --- !u!1 &435628677
 GameObject:
@@ -2303,6 +2308,7 @@ GameObject:
   - component: {fileID: 435628678}
   - component: {fileID: 435628680}
   - component: {fileID: 435628679}
+  - component: {fileID: 435628681}
   m_Layer: 3
   m_Name: Ground (4)
   m_TagString: Untagged
@@ -2430,6 +2436,21 @@ SpriteRenderer:
   m_SpriteTileMode: 0
   m_WasSpriteAssigned: 1
   m_SpriteSortPoint: 0
+--- !u!114 &435628681
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 435628677}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d9c15619204c843b5979051fbe370d38, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::MovingPlatform
+  pointA: {fileID: 1686860748}
+  pointB: {fileID: 591312904}
+  speed: 2
 --- !u!1 &489455591
 GameObject:
   m_ObjectHideFlags: 0
@@ -2925,7 +2946,7 @@ Transform:
   m_GameObject: {fileID: 591312903}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -30.4, y: -6.23, z: 0}
+  m_LocalPosition: {x: -40.15, y: -3.36, z: 0}
   m_LocalScale: {x: 1, y: 1.375, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -14398,9 +14419,9 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 917327556}
-        m_TargetAssemblyTypeName: Tp_manager, Assembly-CSharp
-        m_MethodName: GoTo3
+      - m_Target: {fileID: 1997963675}
+        m_TargetAssemblyTypeName: Enemy_Attack, Assembly-CSharp
+        m_MethodName: 
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -14409,7 +14430,7 @@ MonoBehaviour:
           m_FloatArgument: 0
           m_StringArgument: 
           m_BoolArgument: 0
-        m_CallState: 2
+        m_CallState: 0
 --- !u!114 &1647820667
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -14473,7 +14494,7 @@ Transform:
   m_GameObject: {fileID: 1686860747}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -19.75, y: -6.23, z: 0}
+  m_LocalPosition: {x: -48.82, y: -2.63, z: 0}
   m_LocalScale: {x: 1, y: 1.375, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -19444,24 +19465,17 @@ ParticleSystem:
         m_PostInfinity: 2
         m_RotationOrder: 4
     vectorLabel1_3: W
---- !u!1 &1997963674 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 3658776338987277005, guid: f80a269f18f5a45d594c8f4225709c50, type: 3}
+--- !u!114 &1997963675 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 1754408266416781079, guid: f80a269f18f5a45d594c8f4225709c50, type: 3}
   m_PrefabInstance: {fileID: 427903558}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &1997963680
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1997963674}
+  m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 7d6bc4c5dcf784494aa374d48eaa3aa4, type: 3}
+  m_Script: {fileID: 11500000, guid: f29a37d5c955842e3afb53347b0b4dc7, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::EnemyHealth
-  maxHealth: 25
+  m_EditorClassIdentifier: '::'
 --- !u!1 &2069176011
 GameObject:
   m_ObjectHideFlags: 0
@@ -19890,6 +19904,8 @@ GameObject:
   - component: {fileID: 2142136924}
   - component: {fileID: 2142136926}
   - component: {fileID: 2142136925}
+  - component: {fileID: 2142136927}
+  - component: {fileID: 2142136928}
   m_Layer: 3
   m_Name: Ground (2)
   m_TagString: Untagged
@@ -19906,7 +19922,7 @@ Transform:
   m_GameObject: {fileID: 2142136923}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0.7071068, w: 0.7071068}
-  m_LocalPosition: {x: -29.54, y: 3.51, z: 0}
+  m_LocalPosition: {x: -29.54, y: 6.63, z: 0}
   m_LocalScale: {x: -2.7, y: 4.734503, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -20017,6 +20033,48 @@ SpriteRenderer:
   m_SpriteTileMode: 0
   m_WasSpriteAssigned: 1
   m_SpriteSortPoint: 0
+--- !u!114 &2142136927
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2142136923}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 735576b8cd0d847829ec7af96016ecae, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::FallingPlatforms
+  fallDelay: 0.6
+  destroyDelay: 2
+  shakeAmount: 0.15
+--- !u!50 &2142136928
+Rigidbody2D:
+  serializedVersion: 5
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2142136923}
+  m_BodyType: 0
+  m_Simulated: 1
+  m_UseFullKinematicContacts: 0
+  m_UseAutoMass: 0
+  m_Mass: 1
+  m_LinearDamping: 0
+  m_AngularDamping: 0.05
+  m_GravityScale: 1
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_Interpolate: 0
+  m_SleepingMode: 1
+  m_CollisionDetection: 0
+  m_Constraints: 0
 --- !u!1001 &309396886617288789
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -20088,7 +20146,7 @@ PrefabInstance:
     - target: {fileID: 4642551278860048990, guid: 4ce40e613a2ce44888c891e46023dc67, type: 3}
       propertyPath: DashEffect
       value: 
-      objectReference: {fileID: 8300000, guid: 46e1e152bc65e45ee9805291e2c19df2, type: 3}
+      objectReference: {fileID: 8300000, guid: c38cb0bdf01224ae3964d0fb7e1e3b1d, type: 3}
     - target: {fileID: 4642551278860048990, guid: 4ce40e613a2ce44888c891e46023dc67, type: 3}
       propertyPath: TopSmokeFX
       value: 
