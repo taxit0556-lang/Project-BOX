@@ -13,6 +13,7 @@ GameObject:
   - component: {fileID: 3740727490776160731}
   - component: {fileID: 6838586347600762799}
   - component: {fileID: 301255533312629760}
+  - component: {fileID: 2178599897423024364}
   m_Layer: 0
   m_Name: Enemy
   m_TagString: Untagged
@@ -170,6 +171,25 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1ba1f4fb1ece740b98fb0f6a9cfac61e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::EnemyAI
-  player: {fileID: 0}
+  Target: {fileID: 0}
   speed: 3
   chaseRange: 8
+  pathA: {fileID: 0}
+  pathB: {fileID: 0}
+  patrolWaitTime: 1.5
+  State: 
+  TimeInState: 0
+  Moving: 0
+--- !u!114 &2178599897423024364
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3658776338987277005}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7d6bc4c5dcf784494aa374d48eaa3aa4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::EnemyHealth
+  maxHealth: 25
