@@ -2,28 +2,46 @@ using UnityEngine;
 
 public class EnemyAI : MonoBehaviour
 {
+    public enum EnemyState
+    {
+        Patrol,
+        Chase,
+        Idle
+    }
+
     [Header("References")]
     private Transform player;
     private Rigidbody2D rb;
 
-    public Transform Target;
-
     [Header("Movement")]
     public float speed = 3f;
+    public float jumpForce = 7f;
     public float chaseRange = 8f;
-    
+
     [Header("Patrol")]
     public Transform pathA;
     public Transform pathB;
-    public float patrolWaitTime = 1.5f;
-    private float patrolWaitTimer = 0f;
-    private bool waiting = false;
+    private Transform target;
 
-    [Header("Values")]
-    public string State;
-    public float TimeInState;
-    public bool Moving;
-    float distance;
+    public float patrolWaitTime = 1.5f;
+    private float patrolTimer;
+
+    [Header("Obstacle Detection")]
+    public Vector2 boxCastSize = new Vector2(0.6f, 0.6f);
+    public float boxCastDistance = 0.7f;
+    public LayerMask obstacleLayer;
+
+    [Header("Ground Check")]
+    public Transform groundCheck;
+    public float groundCheckRadius = 0.15f;
+    public LayerMask groundLayer;
+
+    [Header("Debug")]
+    public EnemyState state;
+    public float timeInState;
+
+    float distanceToPlayer;
+    bool waiting;
 
     void Awake()
     {
@@ -31,26 +49,15 @@ public class EnemyAI : MonoBehaviour
     }
 
     void Start()
-    {  
-        SetState("Patrol"); 
-        FindPlayer();
-        Target = pathA;
-        Moving = true; // add this
-    }
-
-    void FindPlayer()
     {
-        GameObject playerObject = GameObject.FindGameObjectWithTag("Player");
-
-        if (playerObject != null)
-        {
-            player = playerObject.transform;
-        }
+        target = pathA;
+        FindPlayer();
+        SetState(EnemyState.Patrol);
     }
 
     void Update()
     {
-        TimeInState += Time.deltaTime;
+        timeInState += Time.deltaTime;
 
         if (player == null)
         {
@@ -58,45 +65,103 @@ public class EnemyAI : MonoBehaviour
             return;
         }
 
-        distance = Vector2.Distance(transform.position, player.position);
+        distanceToPlayer = Vector2.Distance(transform.position, player.position);
+
         StateMachine();
     }
 
-    void patrolling()
+    void FindPlayer()
+    {
+        GameObject obj = GameObject.FindGameObjectWithTag("Player");
+
+        if (obj != null)
+            player = obj.transform;
+    }
+
+    void StateMachine()
+    {
+        switch (state)
+        {
+            case EnemyState.Patrol:
+
+                if (distanceToPlayer <= chaseRange)
+                {
+                    SetState(EnemyState.Chase);
+                    return;
+                }
+
+                Patrol();
+                break;
+
+
+            case EnemyState.Chase:
+
+                if (distanceToPlayer > chaseRange)
+                {
+                    SetState(EnemyState.Idle);
+                    return;
+                }
+
+                ChasePlayer();
+                break;
+
+
+            case EnemyState.Idle:
+
+                StopMoving();
+
+                if (distanceToPlayer <= chaseRange)
+                {
+                    SetState(EnemyState.Chase);
+                    return;
+                }
+
+                if (timeInState > 2f)
+                {
+                    SetState(EnemyState.Patrol);
+                }
+
+                break;
+        }
+    }
+
+    void Patrol()
     {
         if (waiting)
         {
-            patrolWaitTimer += Time.deltaTime;
-            if (patrolWaitTimer >= patrolWaitTime)
+            patrolTimer += Time.deltaTime;
+
+            if (patrolTimer >= patrolWaitTime)
             {
                 waiting = false;
-                patrolWaitTimer = 0f;
+                patrolTimer = 0;
+                target = (target == pathA) ? pathB : pathA;
             }
+
             return;
         }
 
-        if (!Moving)
-        {
-            Target = (Target == pathA) ? pathB : pathA;
-            Moving = true;
-        }
+        MoveTowards(target.position);
 
-        Vector2 direction = (Target.position - transform.position).normalized;
-        rb.linearVelocity = new Vector2(direction.x * speed, rb.linearVelocity.y);
-
-        if (Vector2.Distance(transform.position, Target.position) < 0.5f)
+        if (Vector2.Distance(transform.position, target.position) < 0.4f)
         {
-            Moving = false;
             waiting = true;
-            patrolWaitTimer = 0f;
-            rb.linearVelocity = new Vector2(0, rb.linearVelocity.y);
+            StopMoving();
         }
     }
 
     void ChasePlayer()
     {
-        Vector2 direction = (player.position - transform.position).normalized;
-        rb.linearVelocity = new Vector2(direction.x * speed, rb.linearVelocity.y);
+        MoveTowards(player.position);
+    }
+
+    void MoveTowards(Vector2 destination)
+    {
+        float direction = Mathf.Sign(destination.x - transform.position.x);
+
+        rb.linearVelocity = new Vector2(direction * speed, rb.linearVelocity.y);
+
+        TryJump(direction);
     }
 
     void StopMoving()
@@ -104,37 +169,55 @@ public class EnemyAI : MonoBehaviour
         rb.linearVelocity = new Vector2(0, rb.linearVelocity.y);
     }
 
-    void SetState(string newState)
+   void TryJump(float direction)
+{
+    if (!IsGrounded())
+        return;
+
+    Vector2 origin = transform.position;
+
+    RaycastHit2D hit = Physics2D.BoxCast(
+        origin,
+        boxCastSize,
+        0f,
+        Vector2.right * direction,
+        boxCastDistance,
+        obstacleLayer
+    );
+
+    if (hit.collider != null)
     {
-        if (State != newState)
+        rb.linearVelocity = new Vector2(direction * speed, jumpForce);
+    }
+}
+
+    bool IsGrounded()
+    {
+        return Physics2D.OverlapCircle(
+            groundCheck.position,
+            groundCheckRadius,
+            groundLayer
+        );
+    }
+
+    void SetState(EnemyState newState)
+    {
+        if (state != newState)
         {
-            State = newState;
-            TimeInState = 0f;
+            state = newState;
+            timeInState = 0;
         }
     }
 
-    void StateMachine()
+    void OnDrawGizmosSelected()
     {
-        if (State == "Chase")
-        {
-            ChasePlayer();
+        Gizmos.color = Color.red;
 
-            if (distance > chaseRange)
-            {
-                SetState("Idle");
-            }
-        }
-        else if (State == "Idle")
-        {
-            StopMoving();
+        Vector3 dir = Vector3.right;
 
-            if (distance <= chaseRange) { SetState("Chase"); return; }
-            if (TimeInState > 2f) { SetState("Patrol"); }
-        }
-        else if (State == "Patrol")
-        {
-            if (distance <= chaseRange) { SetState("Chase"); return; }
-            patrolling();
-        }
+        Gizmos.DrawWireCube(
+            transform.position + dir * boxCastDistance,
+            boxCastSize
+        );
     }
 }
