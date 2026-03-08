@@ -6,8 +6,14 @@ public class Player_Movement : MonoBehaviour
 {
     [Header("Movement")]
     public float moveSpeed = 8f;
-    public ParticleSystem TopSmokeFX;
+    //public ParticleSystem TopSmokeFX;
     public ParticleSystem BottomSmokeFX;
+    public ParticleSystem LandingSmokeFX;
+
+    private float TimeGrounded;
+
+    private bool wasGrounded;
+    
 
     [Header("Jump")]
     public float jumpForce = 14f;
@@ -39,8 +45,8 @@ public class Player_Movement : MonoBehaviour
     public Vector2 wallJumpForce = new Vector2(12f,16f);
     public float wallJumpLockTime = 0.18f;
 
-    bool isWallJumping;
-    float wallJumpLockCounter;
+    public bool isWallJumping;
+    public float wallJumpLockCounter;
 
     public float wallStickTime = 0.15f;
     float wallStickCounter;
@@ -93,6 +99,19 @@ public class Player_Movement : MonoBehaviour
         }
         //if(horizontal != 0 && !audioSource.isPlaying && IsGrounded())
             //audioSource.PlayOneShot(WalkingEffect, 0.5f);
+
+        if(!IsGrounded())
+            TimeGrounded = 0;
+
+        if(IsGrounded())
+            TimeGrounded += 1 * Time.deltaTime;
+
+        // In Update():
+        bool isGroundedNow = IsGrounded();
+        if (isGroundedNow && !wasGrounded)
+            LandingSmokeFX.Play();
+        wasGrounded = isGroundedNow;
+            
     }
 
     void FixedUpdate()
@@ -181,7 +200,8 @@ public class Player_Movement : MonoBehaviour
 
     void HandleWallSlide()
     {
-        if (isWallJumping) return;
+    // Don't block the whole method — just skip gravity/velocity changes
+    // Wall detection still needs to run so we can wall jump again immediately
 
         if (IsWalled() && !IsGrounded() && rb.linearVelocity.y < 0)
         {
@@ -193,11 +213,7 @@ public class Player_Movement : MonoBehaviour
             else
             {
                 wallStickCounter -= Time.deltaTime;
-
-                if (wallStickCounter > 0)
-                    isWallSliding = true;
-                else
-                    isWallSliding = false;
+                isWallSliding = wallStickCounter > 0;
             }
         }
         else
@@ -205,14 +221,12 @@ public class Player_Movement : MonoBehaviour
             isWallSliding = false;
         }
 
-        if (isWallSliding)
+    // Only apply wall slide physics if NOT in a wall jump
+        if (isWallSliding && !isWallJumping)
         {
             rb.gravityScale = wallSlideGravity;
-
             if (rb.linearVelocity.y < -wallSlideSpeed)
-            {
-                rb.linearVelocity = new Vector2(rb.linearVelocity.x,-wallSlideSpeed);
-            }
+            rb.linearVelocity = new Vector2(rb.linearVelocity.x, -wallSlideSpeed);
         }
     }
 
