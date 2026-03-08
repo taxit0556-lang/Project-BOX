@@ -2,11 +2,17 @@ using UnityEngine;
 
 public class Player_Death : MonoBehaviour
 {
-    [SerializeField] SpriteRenderer spriteRenderer;
-    TransitionManager_Base transitionManager;
+    [Header("Bool")]
     private bool Dead;
 
+    [Header("refs")]
+    [SerializeField] SpriteRenderer spriteRenderer;
+    TransitionManager_Base transitionManager;
+    public static event System.Action OnPlayerDeath;
+
+    [Header("Settings")]
     public Vector2 CheckPoint;
+
 
 
     void Awake()
@@ -21,14 +27,20 @@ public class Player_Death : MonoBehaviour
         {
             transform.position = CheckPoint;
             Dead = false;
+
+            Debug.Log("NOTDEAD");
         }
     }
 
 
     public void OnDeath()
     {
+        OnPlayerDeath?.Invoke();
+
         transitionManager.PlayTransition();
         Dead = true;
+
+        Debug.Log("OnDeath");
     }
 
 

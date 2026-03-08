@@ -4,6 +4,7 @@ public class EnemyAI : MonoBehaviour
 {
     [Header("References")]
     private Transform player;
+    //private Player_Attack player_Attack;
     private Rigidbody2D rb;
     public Transform Target;
     public Enemy_Attack enemy_Attack;
@@ -24,9 +25,11 @@ public class EnemyAI : MonoBehaviour
     public float TimeInState;
     public bool Moving;
     float distance;
+    public Vector2 SpawnPoint;
 
     void Awake()
     {
+        //player_Attack = GameObject.FindGameObjectWithTag("Player").GetComponent<Player_Attack>();
         rb = GetComponent<Rigidbody2D>();
     }
 
@@ -38,9 +41,27 @@ public class EnemyAI : MonoBehaviour
         Moving = true; // add this
     }
 
+
+    void OnEnable()
+    {
+        Player_Death.OnPlayerDeath += HandlePlayerDeath;
+    }
+
+    void OnDisable()
+    {
+        Player_Death.OnPlayerDeath -= HandlePlayerDeath;
+    }
+
+    void HandlePlayerDeath()
+    {
+        StopAllCoroutines();
+        transform.position = new Vector2(SpawnPoint.x, SpawnPoint.y);
+    }
+
     void FindPlayer()
     {
         GameObject playerObject = GameObject.FindGameObjectWithTag("Player");
+
 
         if (playerObject != null)
         {
@@ -95,7 +116,6 @@ public class EnemyAI : MonoBehaviour
 
     void ChasePlayer()
     {
-        enemy_Attack.BeginAttackCycle(10,100,0);
         Vector2 direction = (player.position - transform.position).normalized;
         rb.linearVelocity = new Vector2(direction.x * speed, rb.linearVelocity.y);
     }

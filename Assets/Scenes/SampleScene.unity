@@ -20184,16 +20184,16 @@ PrefabInstance:
     m_AddedComponents:
     - targetCorrespondingSourceObject: {fileID: 7046778147451083694, guid: 4ce40e613a2ce44888c891e46023dc67, type: 3}
       insertIndex: -1
-      addedObject: {fileID: 309396886617288796}
-    - targetCorrespondingSourceObject: {fileID: 7046778147451083694, guid: 4ce40e613a2ce44888c891e46023dc67, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 309396886617288802}
-    - targetCorrespondingSourceObject: {fileID: 7046778147451083694, guid: 4ce40e613a2ce44888c891e46023dc67, type: 3}
-      insertIndex: -1
       addedObject: {fileID: 309396886617288808}
     - targetCorrespondingSourceObject: {fileID: 7046778147451083694, guid: 4ce40e613a2ce44888c891e46023dc67, type: 3}
       insertIndex: -1
       addedObject: {fileID: 309396886617288813}
+    - targetCorrespondingSourceObject: {fileID: 7046778147451083694, guid: 4ce40e613a2ce44888c891e46023dc67, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 309396886617288796}
+    - targetCorrespondingSourceObject: {fileID: 7046778147451083694, guid: 4ce40e613a2ce44888c891e46023dc67, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 309396886617288802}
   m_SourcePrefab: {fileID: 100100000, guid: 4ce40e613a2ce44888c891e46023dc67, type: 3}
 --- !u!114 &309396886617288796
 MonoBehaviour:
@@ -20207,8 +20207,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6b97ab864d948467da9b4fc5b05387a8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Player_Attack
-  boxCollider2D: {fileID: 309396886617288802}
   damage: 1
+  Health: 100
+  boxCollider2D: {fileID: 309396886617288802}
 --- !u!4 &309396886617288801 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 2075821676923845317, guid: 4ce40e613a2ce44888c891e46023dc67, type: 3}

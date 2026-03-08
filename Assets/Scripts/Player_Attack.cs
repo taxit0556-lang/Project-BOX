@@ -3,14 +3,19 @@ using System.Collections;
 
 public class Player_Attack : MonoBehaviour
 {
-    [SerializeField] private BoxCollider2D boxCollider2D;
+    [Header("Values")]
+    public int damage = 1;
+    public float Health = 100;
 
+
+    [Header("Bools")]
     private bool PlayerAttacking;
     private bool PlayerHitSomething;
 
+    [Header("Refs")]
+    [SerializeField] private BoxCollider2D boxCollider2D;
     EnemyHealth EnemyHit;
 
-    public int damage = 1;
 
     void Start()
     {
@@ -37,6 +42,12 @@ public class Player_Attack : MonoBehaviour
 
         if(Input.GetMouseButtonDown(0) && !PlayerAttacking)
             StartCoroutine(Attacking());
+
+        if(Health <= 0)
+        {
+            GetComponent<Player_Death>().OnDeath();
+            Health = 100;
+        }
     }
 
     void OnTriggerEnter2D(Collider2D other)
