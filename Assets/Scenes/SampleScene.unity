@@ -2250,7 +2250,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 301255533312629760, guid: f80a269f18f5a45d594c8f4225709c50, type: 3}
       propertyPath: obstacleLayer.m_Bits
-      value: 64
+      value: 128
       objectReference: {fileID: 0}
     - target: {fileID: 3658776338987277005, guid: f80a269f18f5a45d594c8f4225709c50, type: 3}
       propertyPath: m_Name
@@ -19945,7 +19945,7 @@ GameObject:
   - component: {fileID: 2142136924}
   - component: {fileID: 2142136926}
   - component: {fileID: 2142136925}
-  m_Layer: 6
+  m_Layer: 7
   m_Name: Ground (2)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
