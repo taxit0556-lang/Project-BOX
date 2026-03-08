@@ -19,49 +19,78 @@ public class PlayerInteract : MonoBehaviour
         {
             DropItem();
         }
+
+        if (Input.GetKeyDown(KeyCode.T))
+        {
+            TryConsume();
+        }
     }
 
-   void TryPickup()
-{
-    if (storedItem != null)
-        return;
-
-    Collider2D hit = Physics2D.OverlapCircle(transform.position, interactRange);
-
-    if (hit == null) return;
-
-    
-    if (hit.CompareTag("JumpOrb"))
+    void TryPickup()
     {
-        Player_Movement movement = GetComponent<Player_Movement>();
+        if (storedItem != null)
+            return;
 
-        if (movement != null)
+        Collider2D hit = Physics2D.OverlapCircle(transform.position, interactRange);
+
+        if (hit == null) return;
+
+        // Jump Orb Unlock
+        if (hit.CompareTag("JumpOrb"))
         {
-            movement.canJump = true;
+            Player_Movement movement = GetComponent<Player_Movement>();
 
-            if (!movement.unlockedVirtues.Contains("Jump"))
-                movement.unlockedVirtues.Add("Jump");
+            if (movement != null)
+            {
+                movement.canJump = true;
 
-            Debug.Log("Jump Unlocked!");
+                if (!movement.unlockedVirtues.Contains("Jump"))
+                    movement.unlockedVirtues.Add("Jump");
+
+                Debug.Log("Jump Unlocked!");
+            }
+
+            Destroy(hit.gameObject);
+            return;
         }
 
-        
+        // Pickup items
+        if (hit.CompareTag("Pickup"))
+        {
+            storedItem = hit.gameObject;
+
+            Rigidbody2D rb = storedItem.GetComponent<Rigidbody2D>();
+            if (rb != null)
+                rb.simulated = false;
+
+            storedItem.SetActive(false);
+
+            Debug.Log("Picked up: " + storedItem.name);
+        }
     }
 
-    
-    if (hit.CompareTag("Pickup"))
+    void TryConsume()
     {
-        storedItem = hit.gameObject;
+        if (storedItem == null)
+            return;
 
-        Rigidbody2D rb = storedItem.GetComponent<Rigidbody2D>();
-        if (rb != null)
-            rb.simulated = false;
+        Heal heal= storedItem.GetComponent<Heal>();
 
-        storedItem.SetActive(false);
+        if (heal != null)
+        {
+            PlayerHealth playerHealth = GetComponent<PlayerHealth>();
 
-        Debug.Log("Picked up: " + storedItem.name);
+            if (playerHealth != null && playerHealth.CanHeal())
+            {
+                heal.Consume(playerHealth);
+                storedItem = null;
+            }
+            else
+            {
+                Debug.Log("Health already full");
+            }
+        }
     }
-}
 
     void DropItem()
     {
