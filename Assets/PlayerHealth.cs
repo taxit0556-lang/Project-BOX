@@ -2,11 +2,9 @@ using UnityEngine;
 
 public class PlayerHealth : MonoBehaviour
 {
-    [Header("Health")]
-    public int maxHealth = 10;
+    public int maxHealth = 5;
     public int currentHealth;
 
-    [Header("Heal Effect")]
     public ParticleSystem healEffect;
 
     void Start()
@@ -14,16 +12,9 @@ public class PlayerHealth : MonoBehaviour
         currentHealth = maxHealth;
     }
 
-    public void TakeDamage(int damage)
+    public bool CanHeal()
     {
-        currentHealth -= damage;
-
-        Debug.Log("Player took damage. Health: " + currentHealth);
-
-        if (currentHealth <= 0)
-        {
-            Die();
-        }
+        return currentHealth < maxHealth;
     }
 
     public void Heal(int amount)
@@ -33,27 +24,27 @@ public class PlayerHealth : MonoBehaviour
         if (currentHealth > maxHealth)
             currentHealth = maxHealth;
 
-        Debug.Log("Player healed. Health: " + currentHealth);
-
         if (healEffect != null)
         {
             Instantiate(healEffect, transform.position, Quaternion.identity);
+        }
+
+        Debug.Log("Player healed. Current health: " + currentHealth);
+    }
+
+    public void TakeDamage(int damage)
+    {
+        currentHealth -= damage;
+
+        if (currentHealth <= 0)
+        {
+            Die();
         }
     }
 
     void Die()
     {
         Debug.Log("Player died");
-
-        // For now disabling player
         gameObject.SetActive(false);
-
-        // Later addding respawn
-    }
-
-
-    public bool CanHeal()
-    {   //does not allow player to cap health when he eats heal.
-        return currentHealth < maxHealth;
     }
 }
