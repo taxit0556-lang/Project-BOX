@@ -25,6 +25,8 @@ public class Enemy_Attack : MonoBehaviour
     private float roll;
     private int chosenAttackIndex = 0;
 
+    RaycastHit2D hit;
+
     [Header("Refs")]
     private Player_Attack player_Attack;
     private Transform player;
@@ -35,7 +37,7 @@ public class Enemy_Attack : MonoBehaviour
     void Start()
     {
         player_Attack = GameObject.Find("Player").GetComponent<Player_Attack>();
-        player = player_Attack.transform; // cache once
+        player = player_Attack.transform;
 
         attacks = new List<Attack>
         {
@@ -68,6 +70,7 @@ public class Enemy_Attack : MonoBehaviour
 
         UpdateRaycast();
 
+        
         if (AttackRange >= distance && !isAttacking)
             StartCoroutine(AttackLoop());
     }
@@ -91,16 +94,14 @@ public class Enemy_Attack : MonoBehaviour
             cumulative += attacks[i].Weight;
             if (roll < cumulative)
             {
-                if (distance <= attacks[i].Range)
+                if (distance <= attacks[i].Range && hittingPlayer)
                 {
                     chosenAttackIndex = i;
                     attacks[i].Execute();
                     return;
                 }
-                // Out of range — skip and try next
             }
         }
-        // No valid attack found (all out of range)
     }
 
     void ChangeWeight(string attackName, float newWeight)
@@ -119,16 +120,16 @@ public class Enemy_Attack : MonoBehaviour
 
     void UpdateRaycast()
     {
-        Vector2 castOrigin = transform.position; // fix: use enemy position
+        Vector2 castOrigin = transform.position;
         Vector2 castDirection = (Vector2)player.position - castOrigin;
         float thisRange = attacks[chosenAttackIndex].Range;
 
-        RaycastHit2D hit = Physics2D.Raycast(castOrigin, castDirection.normalized, thisRange);
+        hit = Physics2D.Raycast(castOrigin, castDirection.normalized, thisRange);
 
         hittingPlayer = hit.collider != null && hit.collider.CompareTag("Player");
     }
 
-    void OnDrawGizmos() // never call this manually
+    void OnDrawGizmos() 
     {
         if (player == null || attacks == null) return;
 
