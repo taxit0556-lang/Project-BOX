@@ -4,10 +4,12 @@ public class EnemyAI : MonoBehaviour
 {
     [Header("References")]
     private Transform player;
+    GameObject playerObject;
     //private Player_Attack player_Attack;
     private Rigidbody2D rb;
-    public Transform Target;
+    private Transform Target;
     public Enemy_Attack enemy_Attack;
+    
 
     [Header("Movement")]
     public float speed = 3f;
@@ -26,6 +28,9 @@ public class EnemyAI : MonoBehaviour
     public bool Moving;
     float distance;
     public Vector2 SpawnPoint;
+
+    Vector2 castOrigin;
+    Vector2 EndPosition;
 
     void Awake()
     {
@@ -60,7 +65,7 @@ public class EnemyAI : MonoBehaviour
 
     void FindPlayer()
     {
-        GameObject playerObject = GameObject.FindGameObjectWithTag("Player");
+        playerObject = GameObject.FindGameObjectWithTag("Player");
 
 
         if (playerObject != null)
@@ -71,6 +76,8 @@ public class EnemyAI : MonoBehaviour
 
     void Update()
     {
+        castOrigin = transform.position;
+
         TimeInState += Time.deltaTime;
 
         if (player == null)
@@ -116,12 +123,14 @@ public class EnemyAI : MonoBehaviour
 
     void ChasePlayer()
     {
-        Vector2 direction = (player.position - transform.position).normalized;
+        Target = player;
+        Vector2 direction = (Target.position - transform.position).normalized;
         rb.linearVelocity = new Vector2(direction.x * speed, rb.linearVelocity.y);
     }
 
     void StopMoving()
     {
+        Moving = false;
         rb.linearVelocity = new Vector2(0, rb.linearVelocity.y);
     }
 
@@ -157,5 +166,11 @@ public class EnemyAI : MonoBehaviour
             if (distance <= chaseRange) { SetState("Chase"); return; }
             patrolling();
         }
+    }
+
+    void OnDrawGizmos()
+    {        
+        Vector2 castDirection = Target.position - transform.position;
+        Gizmos.DrawRay(castOrigin, castDirection.normalized * chaseRange);
     }
 }

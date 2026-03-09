@@ -16,35 +16,34 @@ public class Enemy_Attack : MonoBehaviour
     [Header("Role")]
     public string Role;
 
-
-    [Header("Attack Values")]
+    [Header("Values")]
     public float AttackRange = 20f;
-    private bool IsAttacking;
-    float distance;
+    private bool isAttacking;
+    public bool hittingPlayer;
 
+    private float distance;
+    private float roll;
+    private int chosenAttackIndex = 0;
+
+    RaycastHit2D hit;
 
     [Header("Refs")]
-    public Transform player;
-    Player_Attack player_Attack;
-
-
-    [Header("Attack Settings")]
-    public float lungeSpeed = 10f;
-    public GameObject projectilePrefab;
-    public Transform firePoint;
+    private Player_Attack player_Attack;
+    private Transform player;
 
     private List<Attack> attacks;
+    private bool lowHealthMode = false;
 
     void Start()
     {
-        player = GameObject.FindGameObjectWithTag("Player").transform;
-        player_Attack = player.GetComponent<Player_Attack>();
+        player_Attack = GameObject.Find("Player").GetComponent<Player_Attack>();
+        player = player_Attack.transform;
 
         attacks = new List<Attack>
         {
-            new Attack { Name = "AttackA", Weight = 40f, Range = 8f, Execute = Lunge },
-            new Attack { Name = "AttackB", Weight = 35f, Range = 5f, Execute = Slash },
-            new Attack { Name = "AttackC", Weight = 25f, Range = 13f, Execute = Projectile },
+            new Attack { Name = "Lunge",      Weight = 40f, Range = 10f, Execute = Lunge },
+            new Attack { Name = "Slash",      Weight = 35f, Range = 7f,  Execute = Slash },
+            new Attack { Name = "HeavySlash", Weight = 25f, Range = 7f,  Execute = HeavySlash },
         };
     }
 
@@ -52,47 +51,55 @@ public class Enemy_Attack : MonoBehaviour
     {
         distance = Vector2.Distance(transform.position, player.position);
 
-        if (AttackRange >= distance && !IsAttacking)
-            StartCoroutine(AttackLoop());
+        // Only update weights when health state changes
+        bool shouldUseLowHealth = player_Attack.Health < 50;
+        if (shouldUseLowHealth != lowHealthMode)
+        {
+            lowHealthMode = shouldUseLowHealth;
+            if (lowHealthMode)
+            {
+                ChangeWeight("Lunge", 60);
+                ChangeWeight("HeavySlash", 15);
+            }
+            else
+            {
+                ChangeWeight("Lunge", 40);
+                ChangeWeight("HeavySlash", 35);
+            }
+        }
 
-        if (player_Attack.Health < 50)
-        {
-            ChangeWeight("Lunge", 60);
-            ChangeWeight("Projectile", 15);
-        }
-        else
-        {
-            ChangeWeight("Lunge", 40);
-            ChangeWeight("Projectile", 35);
-        }
+        UpdateRaycast();
+
+        
+        if (AttackRange >= distance && !isAttacking)
+            StartCoroutine(AttackLoop());
     }
 
     IEnumerator AttackLoop()
     {
-        IsAttacking = true;
-
+        isAttacking = true;
         ChooseAttack();
-
         yield return new WaitForSeconds(2f);
-
-        IsAttacking = false;
+        isAttacking = false;
     }
 
     void ChooseAttack()
     {
         float total = attacks.Sum(a => a.Weight);
-        float roll = Random.Range(0f, total);
+        roll = Random.Range(0f, total);
 
         float cumulative = 0f;
-
-        foreach (var attack in attacks)
+        for (int i = 0; i < attacks.Count; i++)
         {
-            cumulative += attack.Weight;
-
-            if (roll < cumulative && distance <= attack.Range)
+            cumulative += attacks[i].Weight;
+            if (roll < cumulative)
             {
-                attack.Execute();
-                return;
+                if (distance <= attacks[i].Range && hittingPlayer)
+                {
+                    chosenAttackIndex = i;
+                    attacks[i].Execute();
+                    return;
+                }
             }
         }
     }
@@ -111,56 +118,30 @@ public class Enemy_Attack : MonoBehaviour
         }
     }
 
-    //Attacks
-
-    void Lunge()
+    void UpdateRaycast()
     {
-        Debug.Log("Lunge!");
-        StartCoroutine(LungeRoutine());
+        Vector2 castOrigin = transform.position;
+        Vector2 castDirection = (Vector2)player.position - castOrigin;
+        float thisRange = attacks[chosenAttackIndex].Range;
+
+        hit = Physics2D.Raycast(castOrigin, castDirection.normalized, thisRange);
+
+        hittingPlayer = hit.collider != null && hit.collider.CompareTag("Player");
     }
 
-    IEnumerator LungeRoutine()
+    void OnDrawGizmos() 
     {
-        Vector2 dir = (player.position - transform.position).normalized;
+        if (player == null || attacks == null) return;
 
-        float timer = 0.25f;
+        Vector2 castOrigin = transform.position;
+        Vector2 castDirection = (Vector2)player.position - castOrigin;
+        float thisRange = attacks[chosenAttackIndex].Range;
 
-        while (timer > 0)
-        {
-            transform.Translate(dir * lungeSpeed * Time.deltaTime);
-            timer -= Time.deltaTime;
-            yield return null;
-        }
-
-        if (Vector2.Distance(transform.position, player.position) < 2f)
-        {
-            player_Attack.Health -= 10;
-        }
+        Gizmos.color = hittingPlayer ? Color.green : Color.red;
+        Gizmos.DrawRay(castOrigin, castDirection.normalized * thisRange);
     }
 
-    void Slash()
-    {
-        Debug.Log("Slash!");
-
-        if (distance <= 5f)
-        {
-            player_Attack.Health -= 25;
-        }
-    }
-
-    void Projectile()
-    {
-        Debug.Log("Projectile!");
-
-        GameObject proj = Instantiate(projectilePrefab, firePoint.position, Quaternion.identity);
-
-        Vector2 dir = (player.position - firePoint.position).normalized;
-
-        proj.GetComponent<Rigidbody2D>().linearVelocity = dir * 12f;
-    }
-
-    void SetRole(string role)
-    {
-        Role = role;
-    }
+    void Lunge()      { Debug.Log("Lunge!");      player_Attack.Health -= 10; }
+    void Slash()      { Debug.Log("Slash!");      player_Attack.Health -= 25; }
+    void HeavySlash() { Debug.Log("HeavySlash!"); player_Attack.Health -= 35; }
 }
