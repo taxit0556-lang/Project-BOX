@@ -16,46 +16,46 @@ public class Enemy_Attack : MonoBehaviour
     [Header("Role")]
     public string Role;
 
-    [Header("Values")]
-    public float PlayerHealth;
+
+    [Header("Attack Values")]
     public float AttackRange = 20f;
     private bool IsAttacking;
     float distance;
 
+
     [Header("Refs")]
+    public Transform player;
     Player_Attack player_Attack;
-    private Transform player;
 
 
-
+    [Header("Attack Settings")]
+    public float lungeSpeed = 10f;
+    public GameObject projectilePrefab;
+    public Transform firePoint;
 
     private List<Attack> attacks;
 
     void Start()
     {
-        player_Attack = GameObject.Find("Player").GetComponent<Player_Attack>();
-        
+        player = GameObject.FindGameObjectWithTag("Player").transform;
+        player_Attack = player.GetComponent<Player_Attack>();
 
         attacks = new List<Attack>
         {
-            new Attack { Name = "Lunge",      Weight = 40f, Range = 8f, Execute = Lunge },
-            new Attack { Name = "Slash",      Weight = 35f, Range = 5f, Execute = Slash },
-            new Attack { Name = "Projectile", Weight = 25f, Range = 13f, Execute = Projectile },
+            new Attack { Name = "AttackA", Weight = 40f, Range = 8f, Execute = Lunge },
+            new Attack { Name = "AttackB", Weight = 35f, Range = 5f, Execute = Slash },
+            new Attack { Name = "AttackC", Weight = 25f, Range = 13f, Execute = Projectile },
         };
-
     }
 
     void Update()
     {
-        GameObject playerObject = GameObject.FindGameObjectWithTag("Player");
-        player = playerObject.transform;
-
         distance = Vector2.Distance(transform.position, player.position);
-        
-        if(AttackRange >= distance && !IsAttacking)
+
+        if (AttackRange >= distance && !IsAttacking)
             StartCoroutine(AttackLoop());
 
-        if(player_Attack.Health < 50)
+        if (player_Attack.Health < 50)
         {
             ChangeWeight("Lunge", 60);
             ChangeWeight("Projectile", 15);
@@ -65,14 +65,16 @@ public class Enemy_Attack : MonoBehaviour
             ChangeWeight("Lunge", 40);
             ChangeWeight("Projectile", 35);
         }
-            
     }
 
     IEnumerator AttackLoop()
     {
         IsAttacking = true;
+
         ChooseAttack();
-        yield return new WaitForSeconds(2f); // attack every 2 seconds
+
+        yield return new WaitForSeconds(2f);
+
         IsAttacking = false;
     }
 
@@ -82,9 +84,11 @@ public class Enemy_Attack : MonoBehaviour
         float roll = Random.Range(0f, total);
 
         float cumulative = 0f;
+
         foreach (var attack in attacks)
         {
             cumulative += attack.Weight;
+
             if (roll < cumulative && distance <= attack.Range)
             {
                 attack.Execute();
@@ -107,9 +111,56 @@ public class Enemy_Attack : MonoBehaviour
         }
     }
 
-    void Lunge()      { Debug.Log("Lunge!"); player_Attack.Health -= 10;}
-    void Slash()      { Debug.Log("Slash!"); player_Attack.Health -= 25;}
-    void Projectile() { Debug.Log("Projectile!"); player_Attack.Health -= 35;}
+    //Attacks
 
-    void SetRole(string role) { Role = role; }
+    void Lunge()
+    {
+        Debug.Log("Lunge!");
+        StartCoroutine(LungeRoutine());
+    }
+
+    IEnumerator LungeRoutine()
+    {
+        Vector2 dir = (player.position - transform.position).normalized;
+
+        float timer = 0.25f;
+
+        while (timer > 0)
+        {
+            transform.Translate(dir * lungeSpeed * Time.deltaTime);
+            timer -= Time.deltaTime;
+            yield return null;
+        }
+
+        if (Vector2.Distance(transform.position, player.position) < 2f)
+        {
+            player_Attack.Health -= 10;
+        }
+    }
+
+    void Slash()
+    {
+        Debug.Log("Slash!");
+
+        if (distance <= 5f)
+        {
+            player_Attack.Health -= 25;
+        }
+    }
+
+    void Projectile()
+    {
+        Debug.Log("Projectile!");
+
+        GameObject proj = Instantiate(projectilePrefab, firePoint.position, Quaternion.identity);
+
+        Vector2 dir = (player.position - firePoint.position).normalized;
+
+        proj.GetComponent<Rigidbody2D>().linearVelocity = dir * 12f;
+    }
+
+    void SetRole(string role)
+    {
+        Role = role;
+    }
 }
