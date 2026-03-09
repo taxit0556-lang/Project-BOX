@@ -17,80 +17,90 @@ public class Enemy_Attack : MonoBehaviour
     public string Role;
 
     [Header("Values")]
-    public float PlayerHealth;
     public float AttackRange = 20f;
-    private bool IsAttacking;
-    float distance;
+    private bool isAttacking;
+    public bool hittingPlayer;
+
+    private float distance;
+    private float roll;
+    private int chosenAttackIndex = 0;
 
     [Header("Refs")]
-    Player_Attack player_Attack;
+    private Player_Attack player_Attack;
     private Transform player;
 
-
-
-
     private List<Attack> attacks;
+    private bool lowHealthMode = false;
 
     void Start()
     {
         player_Attack = GameObject.Find("Player").GetComponent<Player_Attack>();
-        
+        player = player_Attack.transform; // cache once
 
         attacks = new List<Attack>
         {
-            new Attack { Name = "Lunge",      Weight = 40f, Range = 8f, Execute = Lunge },
-            new Attack { Name = "Slash",      Weight = 35f, Range = 5f, Execute = Slash },
-            new Attack { Name = "Projectile", Weight = 25f, Range = 13f, Execute = Projectile },
+            new Attack { Name = "Lunge",      Weight = 40f, Range = 10f, Execute = Lunge },
+            new Attack { Name = "Slash",      Weight = 35f, Range = 7f,  Execute = Slash },
+            new Attack { Name = "HeavySlash", Weight = 25f, Range = 7f,  Execute = HeavySlash },
         };
-
     }
 
     void Update()
     {
-        GameObject playerObject = GameObject.FindGameObjectWithTag("Player");
-        player = playerObject.transform;
-
         distance = Vector2.Distance(transform.position, player.position);
-        
-        if(AttackRange >= distance && !IsAttacking)
-            StartCoroutine(AttackLoop());
 
-        if(player_Attack.Health < 50)
+        // Only update weights when health state changes
+        bool shouldUseLowHealth = player_Attack.Health < 50;
+        if (shouldUseLowHealth != lowHealthMode)
         {
-            ChangeWeight("Lunge", 60);
-            ChangeWeight("Projectile", 15);
+            lowHealthMode = shouldUseLowHealth;
+            if (lowHealthMode)
+            {
+                ChangeWeight("Lunge", 60);
+                ChangeWeight("HeavySlash", 15);
+            }
+            else
+            {
+                ChangeWeight("Lunge", 40);
+                ChangeWeight("HeavySlash", 35);
+            }
         }
-        else
-        {
-            ChangeWeight("Lunge", 40);
-            ChangeWeight("Projectile", 35);
-        }
-            
+
+        UpdateRaycast();
+
+        if (AttackRange >= distance && !isAttacking)
+            StartCoroutine(AttackLoop());
     }
 
     IEnumerator AttackLoop()
     {
-        IsAttacking = true;
+        isAttacking = true;
         ChooseAttack();
-        yield return new WaitForSeconds(2f); // attack every 2 seconds
-        IsAttacking = false;
+        yield return new WaitForSeconds(2f);
+        isAttacking = false;
     }
 
     void ChooseAttack()
     {
         float total = attacks.Sum(a => a.Weight);
-        float roll = Random.Range(0f, total);
+        roll = Random.Range(0f, total);
 
         float cumulative = 0f;
-        foreach (var attack in attacks)
+        for (int i = 0; i < attacks.Count; i++)
         {
-            cumulative += attack.Weight;
-            if (roll < cumulative && distance <= attack.Range)
+            cumulative += attacks[i].Weight;
+            if (roll < cumulative)
             {
-                attack.Execute();
-                return;
+                if (distance <= attacks[i].Range)
+                {
+                    chosenAttackIndex = i;
+                    attacks[i].Execute();
+                    return;
+                }
+                // Out of range — skip and try next
             }
         }
+        // No valid attack found (all out of range)
     }
 
     void ChangeWeight(string attackName, float newWeight)
@@ -107,9 +117,30 @@ public class Enemy_Attack : MonoBehaviour
         }
     }
 
-    void Lunge()      { Debug.Log("Lunge!"); player_Attack.Health -= 10;}
-    void Slash()      { Debug.Log("Slash!"); player_Attack.Health -= 25;}
-    void Projectile() { Debug.Log("Projectile!"); player_Attack.Health -= 35;}
+    void UpdateRaycast()
+    {
+        Vector2 castOrigin = transform.position; // fix: use enemy position
+        Vector2 castDirection = (Vector2)player.position - castOrigin;
+        float thisRange = attacks[chosenAttackIndex].Range;
 
-    void SetRole(string role) { Role = role; }
+        RaycastHit2D hit = Physics2D.Raycast(castOrigin, castDirection.normalized, thisRange);
+
+        hittingPlayer = hit.collider != null && hit.collider.CompareTag("Player");
+    }
+
+    void OnDrawGizmos() // never call this manually
+    {
+        if (player == null || attacks == null) return;
+
+        Vector2 castOrigin = transform.position;
+        Vector2 castDirection = (Vector2)player.position - castOrigin;
+        float thisRange = attacks[chosenAttackIndex].Range;
+
+        Gizmos.color = hittingPlayer ? Color.green : Color.red;
+        Gizmos.DrawRay(castOrigin, castDirection.normalized * thisRange);
+    }
+
+    void Lunge()      { Debug.Log("Lunge!");      player_Attack.Health -= 10; }
+    void Slash()      { Debug.Log("Slash!");      player_Attack.Health -= 25; }
+    void HeavySlash() { Debug.Log("HeavySlash!"); player_Attack.Health -= 35; }
 }
