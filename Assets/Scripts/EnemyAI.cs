@@ -12,6 +12,10 @@ public class EnemyAI : MonoBehaviour
     [Header("References")]
     private Transform player;
     private Rigidbody2D rb;
+    //ADDED becuase enemy jump is very floaty
+    [Header("Gravity")]
+    public float fallMultiplier = 2.5f;
+    public float lowJumpMultiplier = 2f;
 
     [Header("Movement")]
     public float speed = 3f;
@@ -27,8 +31,12 @@ public class EnemyAI : MonoBehaviour
     private float patrolTimer;
 
     [Header("Obstacle Detection")]
-    public Vector2 boxCastSize = new Vector2(0.6f, 0.6f);
-    public float boxCastDistance = 0.7f;
+    public Vector2 wallCheckSize = new Vector2(0.6f, 0.8f);
+    public float wallCheckDistance = 0.6f;
+
+    public Vector2 headCheckSize = new Vector2(0.5f, 0.3f);
+    public float headCheckDistance = 0.9f;
+
     public LayerMask obstacleLayer;
 
     [Header("Ground Check")]
@@ -77,6 +85,19 @@ public class EnemyAI : MonoBehaviour
         if (obj != null)
             player = obj.transform;
     }
+//Added these both to make enemy jumps less floaty
+    void FixedUpdate()
+    {
+         BetterFall();
+    }
+
+void BetterFall()
+{
+    if (rb.linearVelocity.y < 0)
+    {
+        rb.linearVelocity += Vector2.up * Physics2D.gravity.y * (fallMultiplier - 1) * Time.fixedDeltaTime;
+    }
+}
 
     void StateMachine()
     {
@@ -93,7 +114,6 @@ public class EnemyAI : MonoBehaviour
                 Patrol();
                 break;
 
-
             case EnemyState.Chase:
 
                 if (distanceToPlayer > chaseRange)
@@ -104,7 +124,6 @@ public class EnemyAI : MonoBehaviour
 
                 ChasePlayer();
                 break;
-
 
             case EnemyState.Idle:
 
@@ -174,21 +193,33 @@ public class EnemyAI : MonoBehaviour
     if (!IsGrounded())
         return;
 
-    Vector2 origin = transform.position;
+    // start ray slightly above feet
+    Vector2 origin = (Vector2)transform.position + Vector2.down * 0.4f;
 
-    RaycastHit2D hit = Physics2D.BoxCast(
+    RaycastHit2D wall = Physics2D.Raycast(
         origin,
-        boxCastSize,
-        0f,
         Vector2.right * direction,
-        boxCastDistance,
+        0.9f,
         obstacleLayer
     );
 
-    if (hit.collider != null)
-    {
-        rb.linearVelocity = new Vector2(direction * speed, jumpForce);
-    }
+    if (!wall)
+        return;
+
+    // check if space above the obstacle is free
+    Vector2 headOrigin = (Vector2)transform.position + Vector2.up * 0.6f;
+
+    RaycastHit2D ceiling = Physics2D.Raycast(
+        headOrigin,
+        Vector2.right * direction,
+        0.7f,
+        obstacleLayer
+    );
+
+    if (ceiling)
+        return;
+
+    rb.linearVelocity = new Vector2(direction * speed, jumpForce);
 }
 
     bool IsGrounded()
@@ -213,11 +244,16 @@ public class EnemyAI : MonoBehaviour
     {
         Gizmos.color = Color.red;
 
-        Vector3 dir = Vector3.right;
+        Gizmos.DrawWireCube(
+            transform.position + Vector3.right * wallCheckDistance,
+            wallCheckSize
+        );
+
+        Gizmos.color = Color.blue;
 
         Gizmos.DrawWireCube(
-            transform.position + dir * boxCastDistance,
-            boxCastSize
+            transform.position + Vector3.up * headCheckDistance,
+            headCheckSize
         );
     }
 }
