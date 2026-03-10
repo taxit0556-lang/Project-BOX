@@ -12,6 +12,7 @@ TagManager:
   - DeathZone
   - CheckPoint
   - Chain
+  - Swing Point
   layers:
   - Default
   - TransparentFX
