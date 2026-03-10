@@ -134,7 +134,7 @@ public class Enemy_Attack : MonoBehaviour
         Vector2 castDirection = (Vector2)player.position - castOrigin;
         float thisRange = attacks[chosenAttackIndex].Range;
 
-        hit = Physics2D.Raycast(castOrigin, castDirection.normalized, thisRange);
+        hit = Physics2D.BoxCast(castOrigin, castDirection.normalized, thisRange);
 
         hittingPlayer = hit.collider != null && hit.collider.CompareTag("Player");
     }
