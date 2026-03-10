@@ -97,6 +97,10 @@ void BetterFall()
     {
         rb.linearVelocity += Vector2.up * Physics2D.gravity.y * (fallMultiplier - 1) * Time.fixedDeltaTime;
     }
+    else if (rb.linearVelocity.y > 0)
+    {
+        rb.linearVelocity += Vector2.up * Physics2D.gravity.y * (lowJumpMultiplier - 1) * Time.fixedDeltaTime;
+    }
 }
 
     void StateMachine()
@@ -188,40 +192,44 @@ void BetterFall()
         rb.linearVelocity = new Vector2(0, rb.linearVelocity.y);
     }
 
-   void TryJump(float direction)
+  void TryJump(float direction)
 {
     if (!IsGrounded())
         return;
 
-    // start ray slightly above feet
-    Vector2 origin = (Vector2)transform.position + Vector2.down * 0.4f;
+    Vector2 origin = (Vector2)transform.position + Vector2.down * 0.2f;
 
-    RaycastHit2D wall = Physics2D.Raycast(
+    // DEBUG LINE
+    Debug.DrawRay(origin, Vector2.right * direction * wallCheckDistance, Color.red);
+
+    RaycastHit2D wall = Physics2D.BoxCast(
         origin,
+        wallCheckSize,
+        0f,
         Vector2.right * direction,
-        0.9f,
+        wallCheckDistance,
         obstacleLayer
     );
 
-    if (!wall)
+    if (wall.collider == null)
         return;
 
-    // check if space above the obstacle is free
     Vector2 headOrigin = (Vector2)transform.position + Vector2.up * 0.6f;
 
-    RaycastHit2D ceiling = Physics2D.Raycast(
+    RaycastHit2D ceiling = Physics2D.BoxCast(
         headOrigin,
+        headCheckSize,
+        0f,
         Vector2.right * direction,
-        0.7f,
+        headCheckDistance,
         obstacleLayer
     );
 
-    if (ceiling)
+    if (ceiling.collider != null)
         return;
 
-    rb.linearVelocity = new Vector2(direction * speed, jumpForce);
+    rb.linearVelocity = new Vector2(rb.linearVelocity.x, jumpForce);
 }
-
     bool IsGrounded()
     {
         return Physics2D.OverlapCircle(
@@ -240,20 +248,23 @@ void BetterFall()
         }
     }
 
-    void OnDrawGizmosSelected()
-    {
-        Gizmos.color = Color.red;
+   void OnDrawGizmosSelected()
+{
+    Gizmos.color = Color.red;
 
-        Gizmos.DrawWireCube(
-            transform.position + Vector3.right * wallCheckDistance,
-            wallCheckSize
-        );
+    float dir = 1;
 
-        Gizmos.color = Color.blue;
+    if (Application.isPlaying && player != null)
+        dir = Mathf.Sign(player.position.x - transform.position.x);
 
-        Gizmos.DrawWireCube(
-            transform.position + Vector3.up * headCheckDistance,
-            headCheckSize
-        );
-    }
+    Vector3 wallPos = transform.position + Vector3.right * dir * wallCheckDistance;
+
+    Gizmos.DrawWireCube(wallPos, wallCheckSize);
+
+    Gizmos.color = Color.blue;
+
+    Vector3 headPos = transform.position + Vector3.right * dir * headCheckDistance + Vector3.up * 0.6f;
+
+    Gizmos.DrawWireCube(headPos, headCheckSize);
+}
 }
