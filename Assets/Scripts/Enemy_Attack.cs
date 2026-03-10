@@ -10,6 +10,7 @@ public class Enemy_Attack : MonoBehaviour
         public string Name;
         public float Weight;
         public float Range;
+        public float AnimationTime;
         public System.Action Execute;
     }
 
@@ -17,6 +18,8 @@ public class Enemy_Attack : MonoBehaviour
     public string Role;
 
     [Header("Values")]
+    Vector2 BoxSize;
+    Vector2 AttackBoxSize;
     public float AttackRange = 20f;
     private bool isAttacking;
     public bool hittingPlayer;
@@ -29,21 +32,24 @@ public class Enemy_Attack : MonoBehaviour
 
     [Header("Refs")]
     private Player_Attack player_Attack;
+    EnemyAI enemyAI;
     private Transform player;
+    
 
     private List<Attack> attacks;
     private bool lowHealthMode = false;
 
     void Start()
     {
+        enemyAI = GetComponent<EnemyAI>();
         player_Attack = GameObject.Find("Player").GetComponent<Player_Attack>();
         player = player_Attack.transform;
 
         attacks = new List<Attack>
         {
-            new Attack { Name = "Lunge",      Weight = 40f, Range = 10f, Execute = Lunge },
-            new Attack { Name = "Slash",      Weight = 35f, Range = 7f,  Execute = Slash },
-            new Attack { Name = "HeavySlash", Weight = 25f, Range = 7f,  Execute = HeavySlash },
+            new Attack { Name = "Lunge",      Weight = 40f, Range = 10f, AnimationTime = 0.26f, Execute = Lunge },
+            new Attack { Name = "Slash",      Weight = 35f, Range = 7f,  AnimationTime = 0.16f, Execute = Slash },
+            new Attack { Name = "HeavySlash", Weight = 25f, Range = 7f,  AnimationTime = 0.19f, Execute = HeavySlash },
         };
     }
 
@@ -67,9 +73,8 @@ public class Enemy_Attack : MonoBehaviour
                 ChangeWeight("HeavySlash", 35);
             }
         }
-
+        
         UpdateRaycast();
-
         
         if (AttackRange >= distance && !isAttacking)
             StartCoroutine(AttackLoop());
@@ -85,6 +90,7 @@ public class Enemy_Attack : MonoBehaviour
 
     void ChooseAttack()
     {
+
         float total = attacks.Sum(a => a.Weight);
         roll = Random.Range(0f, total);
 
@@ -96,6 +102,10 @@ public class Enemy_Attack : MonoBehaviour
             {
                 if (distance <= attacks[i].Range && hittingPlayer)
                 {
+                    player_Attack.OnHit(1);
+                    enemyAI.SetState(attacks[i].Name + " Attack");
+                    enemyAI.StunTime(attacks[i].AnimationTime);
+                    Debug.Log("Attaked");
                     chosenAttackIndex = i;
                     attacks[i].Execute();
                     return;

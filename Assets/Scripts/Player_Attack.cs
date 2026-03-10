@@ -9,8 +9,9 @@ public class Player_Attack : MonoBehaviour
 
 
     [Header("Bools")]
-    private bool PlayerAttacking;
+    public bool PlayerAttacking;
     private bool PlayerHitSomething;
+    public bool GotHit;
 
     [Header("Refs")]
     [SerializeField] private BoxCollider2D boxCollider2D;
@@ -48,6 +49,18 @@ public class Player_Attack : MonoBehaviour
             GetComponent<Player_Death>().OnDeath();
             Health = 100;
         }
+    }
+
+    public void OnHit(float StunTime)
+    {
+        StartCoroutine(onHit(StunTime));
+    } 
+
+    IEnumerator onHit(float StunTime)
+    {
+        GotHit = true;
+        yield return new WaitForSeconds(StunTime);
+        GotHit = false;
     }
 
     void OnTriggerEnter2D(Collider2D other)

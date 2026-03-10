@@ -8,6 +8,7 @@ public class Player_Movement : MonoBehaviour
     public float moveSpeed = 8f;
     //public ParticleSystem TopSmokeFX;
     public ParticleSystem BottomSmokeFX;
+    public ParticleSystem DashFX;
     public ParticleSystem LandingSmokeFX;
 
     private float TimeGrounded;
@@ -38,7 +39,7 @@ public class Player_Movement : MonoBehaviour
     public float dashTime = 0.18f;
     public float dashFreezeTime = 0.05f;
 
-    bool isDashing;
+    public bool isDashing;
     bool canDash = true;
 
     [Header("Wall")]
@@ -169,7 +170,6 @@ public class Player_Movement : MonoBehaviour
 
     void Jump()
     {
-        Debug.Log("RunningJump");
         jumpBufferCounter = 0;
         coyoteCounter = 0;
 
@@ -182,8 +182,6 @@ public class Player_Movement : MonoBehaviour
 
     void WallJump()
     {
-        Debug.Log("RunningWallJump");
-        Debug.Log("WallJumped");
 
         isWallJumping = true;
         isWallSliding = false;
@@ -234,8 +232,7 @@ public class Player_Movement : MonoBehaviour
     {
         audioSource.PlayOneShot(DashEffect, 1.0f);
 
-        Debug.Log("RunningDash");
-        BottomSmokeFX.Play();
+        DashFX.Play();
         canDash = false;
         isDashing = true;
 
@@ -260,6 +257,7 @@ public class Player_Movement : MonoBehaviour
         rb.gravityScale = 3;
         isDashing = false;
     }
+
 
     void HandleTimers()
     {
@@ -311,8 +309,6 @@ public class Player_Movement : MonoBehaviour
 
     void ShowVirtues()
     {
-        Debug.Log("Unlocked Virtues:");
-
         foreach(string virtue in unlockedVirtues)
         {
             Debug.Log("- " + virtue);

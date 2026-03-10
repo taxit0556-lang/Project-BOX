@@ -1,4 +1,5 @@
 using UnityEngine;
+using System.Collections;
 
 public class EnemyAI : MonoBehaviour
 {
@@ -134,7 +135,18 @@ public class EnemyAI : MonoBehaviour
         rb.linearVelocity = new Vector2(0, rb.linearVelocity.y);
     }
 
-    void SetState(string newState)
+    public void StunTime(float Time)
+    {
+        StartCoroutine(JustAttacked(Time));
+    }
+
+    IEnumerator JustAttacked(float Time)
+    {
+        yield return new WaitForSeconds(Time);
+        SetState("Chase");
+    }
+
+    public void SetState(string newState)
     {
         if (State != newState)
         {
@@ -166,6 +178,8 @@ public class EnemyAI : MonoBehaviour
             if (distance <= chaseRange) { SetState("Chase"); return; }
             patrolling();
         }
+        else
+            StopMoving();
     }
 
     void OnDrawGizmos()
