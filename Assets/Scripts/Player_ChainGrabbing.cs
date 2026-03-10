@@ -2,55 +2,108 @@ using UnityEngine;
 
 public class Player_ChainGrabbing : MonoBehaviour
 {
-    private HingeJoint2D joint;
+    private DistanceJoint2D joint;
     private Rigidbody2D rb;
 
-    private bool grabbing;
+    public float grabRadius = 2.5f;
+    public LayerMask swingLayer;
 
-    public KeyCode swingKey = KeyCode.X;
+    private bool grabbing;
+    private Transform currentPoint;
+
+    private LineRenderer chain;
 
     void Start()
     {
         rb = GetComponent<Rigidbody2D>();
 
-        joint = gameObject.AddComponent<HingeJoint2D>();
+        joint = gameObject.AddComponent<DistanceJoint2D>();
         joint.enabled = false;
-        joint.autoConfigureConnectedAnchor = false;
-    }
+        joint.autoConfigureDistance = false;
 
-    void OnCollisionStay2D(Collision2D collision)
-    {
-        if (collision.gameObject.CompareTag("SwingPoint") && !grabbing)
-        {
-            if (Input.GetKey(swingKey))
-            {
-                Rigidbody2D swingRB = collision.gameObject.GetComponent<Rigidbody2D>();
-
-                if (swingRB != null)
-                {
-                    joint.connectedBody = swingRB;
-                    joint.enabled = true;
-
-                    grabbing = true;
-
-                    rb.linearVelocity = Vector2.zero;
-                }
-            }
-        }
+        chain = GetComponent<LineRenderer>();
+        chain.positionCount = 2;
+        chain.enabled = false;
     }
 
     void Update()
     {
-        if (grabbing && !Input.GetKey(swingKey))
+        if (Input.GetKey(KeyCode.X) && !grabbing)
+        {
+            FindSwingPoint();
+        }
+
+        if (grabbing && !Input.GetKey(KeyCode.X))
         {
             ReleaseChain();
         }
+
+        if (grabbing)
+        {
+            UpdateChain();
+        }
+    }
+
+    void FindSwingPoint()
+    {
+        Collider2D[] hits = Physics2D.OverlapCircleAll(transform.position, grabRadius, swingLayer);
+
+        float closest = Mathf.Infinity;
+        Transform closestPoint = null;
+
+        foreach (Collider2D hit in hits)
+        {
+            float dist = Vector2.Distance(transform.position, hit.transform.position);
+
+            if (dist < closest)
+            {
+                closest = dist;
+                closestPoint = hit.transform;
+            }
+        }
+
+        if (closestPoint != null)
+        {
+            AttachToPoint(closestPoint);
+        }
+    }
+
+    void AttachToPoint(Transform point)
+    {
+        SwingPoint sp = point.GetComponent<SwingPoint>();
+
+        joint.connectedAnchor = point.position;
+        joint.enabled = true;
+
+        if (sp != null)
+        {
+            joint.distance = sp.ropeLength;
+        }
+
+        grabbing = true;
+        currentPoint = point;
+
+        chain.enabled = true;
+    }
+
+    void UpdateChain()
+    {
+        chain.SetPosition(0, transform.position);
+        chain.SetPosition(1, currentPoint.position);
     }
 
     void ReleaseChain()
     {
         joint.enabled = false;
-        joint.connectedBody = null;
         grabbing = false;
+
+        chain.enabled = false;
+        currentPoint = null;
+    }
+
+    void OnDrawGizmosSelected()
+    {
+        Gizmos.color = Color.yellow;
+        Gizmos.DrawWireSphere(transform.position, grabRadius);
     }
 }

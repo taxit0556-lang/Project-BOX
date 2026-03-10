@@ -21901,7 +21901,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d5e0353e5aa75426ab191a015d101f28, type: 3}
   m_Name: 
   m_EditorClassIdentifier: '::'
-  swingKey: 120
+  grabRadius: 2.5
+  swingLayer:
+    serializedVersion: 2
+    m_Bits: 0
 --- !u!114 &309396886617288818
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -21965,8 +21968,16 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 6335408393002974093, guid: 1ee793b5b19fc4afd9951434659c36da, type: 3}
+      propertyPath: m_TagString
+      value: Untagged
+      objectReference: {fileID: 0}
     - target: {fileID: 6836583910363843231, guid: 1ee793b5b19fc4afd9951434659c36da, type: 3}
       propertyPath: m_Name
+      value: SwingPoint
+      objectReference: {fileID: 0}
+    - target: {fileID: 6836583910363843231, guid: 1ee793b5b19fc4afd9951434659c36da, type: 3}
+      propertyPath: m_TagString
       value: SwingPoint
       objectReference: {fileID: 0}
     m_RemovedComponents: []

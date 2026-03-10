@@ -13,6 +13,7 @@ TagManager:
   - CheckPoint
   - Chain
   - Swing Point
+  - SwingPoint
   layers:
   - Default
   - TransparentFX
@@ -22,7 +23,7 @@ TagManager:
   - UI
   - Wall
   - Obstacle
-  - 
+  - SwingPoint
   - 
   - 
   - 
