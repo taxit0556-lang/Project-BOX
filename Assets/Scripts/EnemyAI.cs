@@ -10,6 +10,7 @@ public class EnemyAI : MonoBehaviour
     private Rigidbody2D rb;
     private Transform Target;
     public Enemy_Attack enemy_Attack;
+    EnemyHealth enemyHealth;
     
 
     [Header("Movement")]
@@ -37,6 +38,8 @@ public class EnemyAI : MonoBehaviour
     {
         //player_Attack = GameObject.FindGameObjectWithTag("Player").GetComponent<Player_Attack>();
         rb = GetComponent<Rigidbody2D>();
+
+        enemyHealth = GetComponent<EnemyHealth>();
     }
 
     void Start()
@@ -77,6 +80,11 @@ public class EnemyAI : MonoBehaviour
 
     void Update()
     {
+        if(rb.linearVelocity.x > 0)
+            transform.localScale = new Vector3(1,1,1);
+        else if(rb.linearVelocity.x < 0)
+           transform.localScale = new Vector3(-1,1,1);
+
         castOrigin = transform.position;
 
         TimeInState += Time.deltaTime;
@@ -177,6 +185,13 @@ public class EnemyAI : MonoBehaviour
         {
             if (distance <= chaseRange) { SetState("Chase"); return; }
             patrolling();
+        }
+        else if(State == "Stuned")
+        {
+            if(TimeInState > enemyHealth.hitStunDuration)
+            {
+                SetState("Idle");
+            }
         }
         else
             StopMoving();

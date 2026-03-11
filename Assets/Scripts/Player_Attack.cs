@@ -6,6 +6,7 @@ public class Player_Attack : MonoBehaviour
     [Header("Values")]
     public int damage = 1;
     public float Health = 100;
+    public float knockbackForce;
 
 
     [Header("Bools")]
@@ -16,12 +17,15 @@ public class Player_Attack : MonoBehaviour
     [Header("Refs")]
     [SerializeField] private BoxCollider2D boxCollider2D;
     EnemyHealth EnemyHit;
+    Rigidbody2D rb;
 
 
     void Start()
     {
         PlayerAttacking = false;
         boxCollider2D.enabled = false;
+
+        rb = GetComponent<Rigidbody2D>();
     }
 
     IEnumerator Attacking()
@@ -51,14 +55,18 @@ public class Player_Attack : MonoBehaviour
         }
     }
 
-    public void OnHit(float StunTime)
+    public void OnHit(float StunTime , Transform Direction)
     {
-        StartCoroutine(onHit(StunTime));
+        StartCoroutine(onHit(StunTime, Direction));
     } 
 
-    IEnumerator onHit(float StunTime)
+    IEnumerator onHit(float StunTime , Transform Direction)
     {
         GotHit = true;
+
+        rb.linearVelocity = Vector2.zero; 
+        rb.AddForce(new Vector2(Direction.localScale.x * knockbackForce, 0), ForceMode2D.Impulse);
+
         yield return new WaitForSeconds(StunTime);
         GotHit = false;
     }

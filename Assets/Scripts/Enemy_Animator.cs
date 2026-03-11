@@ -24,10 +24,10 @@ public class Enemy_Animator : MonoBehaviour
 
     void Animation()
     {
-        if(enemyHealth.gotHit == true) 
-            animator.SetBool("gotHit", true);
+        if(enemyHealth.gotHit == true || enemyAI.State == "Stuned") 
+            animator.SetBool("GotHit", true);
         else 
-            animator.SetBool("gotHit", false);
+            animator.SetBool("GotHit", false);
 
 
 

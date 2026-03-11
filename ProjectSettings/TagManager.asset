@@ -12,6 +12,7 @@ TagManager:
   - DeathZone
   - CheckPoint
   - Chain
+  - AttackBox
   layers:
   - Default
   - TransparentFX

@@ -21,7 +21,10 @@ public class Enemy_Attack : MonoBehaviour
     Vector2 BoxSize;
     Vector2 AttackBoxSize;
     public float AttackRange = 20f;
+    public float ShakeAmount;
     private bool isAttacking;
+    public bool CanAttack;
+    public bool InRangePlayer;
     public bool hittingPlayer;
 
     private float distance;
@@ -29,6 +32,7 @@ public class Enemy_Attack : MonoBehaviour
     private int chosenAttackIndex = 0;
 
     RaycastHit2D hit;
+    RaycastHit2D Attackhit;
 
     [Header("Refs")]
     private Player_Attack player_Attack;
@@ -47,14 +51,16 @@ public class Enemy_Attack : MonoBehaviour
 
         attacks = new List<Attack>
         {
-            new Attack { Name = "Lunge",      Weight = 40f, Range = 10f, AnimationTime = 0.26f, Execute = Lunge },
-            new Attack { Name = "Slash",      Weight = 35f, Range = 7f,  AnimationTime = 0.16f, Execute = Slash },
-            new Attack { Name = "HeavySlash", Weight = 25f, Range = 7f,  AnimationTime = 0.19f, Execute = HeavySlash },
+            new Attack { Name = "Lunge",      Weight = 40f, Range = 3f, AnimationTime = 0.26f, Execute = Lunge },
+            new Attack { Name = "Slash",      Weight = 35f, Range = 2f,  AnimationTime = 0.16f, Execute = Slash },
+            new Attack { Name = "HeavySlash", Weight = 25f, Range = 1f,  AnimationTime = 0.19f, Execute = HeavySlash },
         };
     }
 
     void Update()
     {
+        BoxSize = new Vector2(attacks[chosenAttackIndex].Range, 1.85454f);
+
         distance = Vector2.Distance(transform.position, player.position);
 
         // Only update weights when health state changes
@@ -76,20 +82,46 @@ public class Enemy_Attack : MonoBehaviour
         
         UpdateRaycast();
         
-        if (AttackRange >= distance && !isAttacking)
+        if (AttackRange >= distance && !isAttacking && enemyAI.State != "Stuned")
             StartCoroutine(AttackLoop());
     }
 
     IEnumerator AttackLoop()
     {
         isAttacking = true;
-        ChooseAttack();
+        ChooseAttack(false);
         yield return new WaitForSeconds(2f);
         isAttacking = false;
+        CanAttack = false;
+    }
+    
+
+    IEnumerator AttackCast()
+    {
+        if(isAttacking)
+            AttackRaycast();
+        yield return new WaitForSeconds(attacks[chosenAttackIndex].AnimationTime);
+    }   
+
+    IEnumerator Shake()
+    {
+        CanAttack = false;
+        LeanTween.moveX(gameObject, transform.position.x + 0.1f, 0.05f)
+        .setEase(LeanTweenType.easeShake)
+        .setLoopPingPong(6);
+
+        yield return new WaitForSeconds(0.5f);
+        CanAttack = true;
+
+        if(attacks[chosenAttackIndex].Range <= distance)
+            ChooseAttack(true);
+        else
+            ChooseAttack(false);
     }
 
-    void ChooseAttack()
+    void ChooseAttack(bool ShakeAttack)
     {
+        StartCoroutine(AttackCast());
 
         float total = attacks.Sum(a => a.Weight);
         roll = Random.Range(0f, total);
@@ -100,15 +132,36 @@ public class Enemy_Attack : MonoBehaviour
             cumulative += attacks[i].Weight;
             if (roll < cumulative)
             {
-                if (distance <= attacks[i].Range && hittingPlayer)
+                if (distance <= attacks[i].Range && InRangePlayer || ShakeAttack)
                 {
-                    player_Attack.OnHit(1);
-                    enemyAI.SetState(attacks[i].Name + " Attack");
-                    enemyAI.StunTime(attacks[i].AnimationTime);
-                    Debug.Log("Attaked");
-                    chosenAttackIndex = i;
-                    attacks[i].Execute();
-                    return;
+                    if(CanAttack == false)
+                        StartCoroutine(Shake());
+                    else if (ShakeAttack)
+                    {
+                        enemyAI.SetState(attacks[i].Name + " Attack");
+                        enemyAI.StunTime(attacks[i].AnimationTime);
+                        ShakeAttack = false;
+                    }
+                    else
+                    {
+
+                        enemyAI.SetState(attacks[i].Name + " Attack");
+                        enemyAI.StunTime(attacks[i].AnimationTime);
+
+                        chosenAttackIndex = i;
+
+                        attacks[i].Execute();
+
+                        if (Attackhit)
+                        {
+                            player_Attack.OnHit(1, transform);
+                        }
+
+                        ShakeAttack = false;
+                    
+                    }
+
+                    return;            
                 }
             }
         }
@@ -130,28 +183,41 @@ public class Enemy_Attack : MonoBehaviour
 
     void UpdateRaycast()
     {
-        Vector2 castOrigin = transform.position;
+        Vector2 castOrigin = new Vector2(transform.position.x + 1.1f * transform.localScale.x, transform.position.y);
         Vector2 castDirection = (Vector2)player.position - castOrigin;
         float thisRange = attacks[chosenAttackIndex].Range;
 
-        hit = Physics2D.Raycast(castOrigin, castDirection.normalized, thisRange);
+        hit = Physics2D.BoxCast(castOrigin, BoxSize, 0, transform.position);
 
-        hittingPlayer = hit.collider != null && hit.collider.CompareTag("Player");
+        InRangePlayer = hit.collider != null && hit.collider.CompareTag("Player");
+    }
+    void AttackRaycast()
+    {
+        Vector2 castOrigin = new Vector2(transform.position.x + 1.1f * transform.localScale.x, transform.position.y);
+
+        Attackhit = Physics2D.BoxCast(castOrigin, AttackBoxSize, 0, transform.position);
+
+        hittingPlayer = Attackhit.collider != null && Attackhit.collider.CompareTag("Player");
     }
 
     void OnDrawGizmos() 
     {
         if (player == null || attacks == null) return;
 
-        Vector2 castOrigin = transform.position;
+        Vector2 castOrigin = new Vector2(transform.position.x + 1.1f * transform.localScale.x, transform.position.y);
         Vector2 castDirection = (Vector2)player.position - castOrigin;
         float thisRange = attacks[chosenAttackIndex].Range;
 
+        
+
+        Gizmos.color = InRangePlayer ? Color.green : Color.red;
+        Gizmos.DrawWireCube(castOrigin, BoxSize);
+
         Gizmos.color = hittingPlayer ? Color.green : Color.red;
-        Gizmos.DrawRay(castOrigin, castDirection.normalized * thisRange);
+        Gizmos.DrawCube(castOrigin, AttackBoxSize);
     }
 
-    void Lunge()      { Debug.Log("Lunge!");      player_Attack.Health -= 10; }
-    void Slash()      { Debug.Log("Slash!");      player_Attack.Health -= 25; }
-    void HeavySlash() { Debug.Log("HeavySlash!"); player_Attack.Health -= 35; }
+    void Lunge()      { Debug.Log("Lunge!");      if(hittingPlayer){player_Attack.Health -= 10;} AttackBoxSize = new Vector2(1.28f, 0.47f);}
+    void Slash()      { Debug.Log("Slash!");      if(hittingPlayer){player_Attack.Health -= 25;} AttackBoxSize = new Vector2(1.28f, 1.14f);}
+    void HeavySlash() { Debug.Log("HeavySlash!"); if(hittingPlayer){player_Attack.Health -= 35;} AttackBoxSize = new Vector2(1.28f, 2.55f);}
 }
