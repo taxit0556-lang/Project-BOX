@@ -6,7 +6,6 @@ public class Player_Movement : MonoBehaviour
 {
     [Header("Movement")]
     public float moveSpeed = 8f;
-    //public ParticleSystem TopSmokeFX;
     public ParticleSystem BottomSmokeFX;
     public ParticleSystem LandingSmokeFX;
 
@@ -40,6 +39,8 @@ public class Player_Movement : MonoBehaviour
 
     bool isDashing;
     bool canDash = true;
+
+    public bool IsInvincible { get { return isDashing; } } // ADDED IFRAMES
 
     [Header("Wall")]
     public Vector2 wallJumpForce = new Vector2(12f,16f);
@@ -97,8 +98,6 @@ public class Player_Movement : MonoBehaviour
         {
             ShowVirtues();
         }
-        //if(horizontal != 0 && !audioSource.isPlaying && IsGrounded())
-            //audioSource.PlayOneShot(WalkingEffect, 0.5f);
 
         if(!IsGrounded())
             TimeGrounded = 0;
@@ -106,7 +105,6 @@ public class Player_Movement : MonoBehaviour
         if(IsGrounded())
             TimeGrounded += 1 * Time.deltaTime;
 
-        // In Update():
         bool isGroundedNow = IsGrounded();
         if (isGroundedNow && !wasGrounded)
             LandingSmokeFX.Play();
@@ -118,10 +116,10 @@ public class Player_Movement : MonoBehaviour
     {
         if (isDashing) return;
 
-    if (currentPlatform != null)
-    {
-    rb.position += currentPlatform.PlatformVelocity * Time.fixedDeltaTime;
-    }   
+        if (currentPlatform != null)
+        {
+            rb.position += currentPlatform.PlatformVelocity * Time.fixedDeltaTime;
+        }   
 
         Move();
         Gravity();
@@ -132,13 +130,11 @@ public class Player_Movement : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.Space))
             jumpBufferCounter = jumpBuffer;
 
-        // NORMAL JUMP
         if (jumpBufferCounter > 0 && coyoteCounter > 0 && canJump && !isWallSliding)
         {
             Jump();
         }
 
-        // WALL JUMP
         if (Input.GetKeyDown(KeyCode.Space) && isWallSliding && !IsGrounded())
         {
             WallJump();
@@ -200,9 +196,6 @@ public class Player_Movement : MonoBehaviour
 
     void HandleWallSlide()
     {
-    // Don't block the whole method — just skip gravity/velocity changes
-    // Wall detection still needs to run so we can wall jump again immediately
-
         if (IsWalled() && !IsGrounded() && rb.linearVelocity.y < 0)
         {
             if (horizontal != 0)
@@ -221,7 +214,6 @@ public class Player_Movement : MonoBehaviour
             isWallSliding = false;
         }
 
-    // Only apply wall slide physics if NOT in a wall jump
         if (isWallSliding && !isWallJumping)
         {
             rb.gravityScale = wallSlideGravity;
@@ -321,24 +313,21 @@ public class Player_Movement : MonoBehaviour
 
     void OnCollisionEnter2D(Collision2D collision)
     {
-    MovingPlatform platform = collision.collider.GetComponent<MovingPlatform>();
+        MovingPlatform platform = collision.collider.GetComponent<MovingPlatform>();
 
-    if (platform != null)
+        if (platform != null)
+        {
+            currentPlatform = platform;
+        }
+    }
+
+    void OnCollisionExit2D(Collision2D collision)
     {
-        currentPlatform = platform;
+        MovingPlatform platform = collision.collider.GetComponent<MovingPlatform>();
+
+        if (platform != null)
+        {
+            currentPlatform = null;
+        }
     }
-    }
-
-void OnCollisionExit2D(Collision2D collision)
-    {
-    MovingPlatform platform = collision.collider.GetComponent<MovingPlatform>();
-
-    if (platform != null)
-    {
-        currentPlatform = null;
-    }
-    }
-
-
-
 }

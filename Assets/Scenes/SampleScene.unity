@@ -21923,7 +21923,7 @@ PrefabInstance:
     - target: {fileID: 4642551278860048990, guid: 4ce40e613a2ce44888c891e46023dc67, type: 3}
       propertyPath: DashEffect
       value: 
-      objectReference: {fileID: 8300000, guid: 46e1e152bc65e45ee9805291e2c19df2, type: 3}
+      objectReference: {fileID: 8300000, guid: 9656b8457f253406eaa06d537ddf3ac6, type: 3}
     - target: {fileID: 4642551278860048990, guid: 4ce40e613a2ce44888c891e46023dc67, type: 3}
       propertyPath: TopSmokeFX
       value: 
