@@ -80,10 +80,13 @@ public class EnemyAI : MonoBehaviour
 
     void Update()
     {
-        if(rb.linearVelocity.x > 0)
+        if(State != "Stuned" && enemy_Attack.afterAttack != true)
+        {
+            if(rb.linearVelocity.x > 0)
             transform.localScale = new Vector3(1,1,1);
-        else if(rb.linearVelocity.x < 0)
-           transform.localScale = new Vector3(-1,1,1);
+            else if(rb.linearVelocity.x < 0)
+            transform.localScale = new Vector3(-1,1,1);
+        }
 
         castOrigin = transform.position;
 
@@ -136,6 +139,12 @@ public class EnemyAI : MonoBehaviour
         Vector2 direction = (Target.position - transform.position).normalized;
         rb.linearVelocity = new Vector2(direction.x * speed, rb.linearVelocity.y);
     }
+    void MakeDist()
+    {
+        Target = player;
+        Vector2 direction = (Target.position - transform.position).normalized;
+        rb.linearVelocity = new Vector2(-direction.x * speed / 2, rb.linearVelocity.y);
+    }
 
     void StopMoving()
     {
@@ -167,19 +176,29 @@ public class EnemyAI : MonoBehaviour
     {
         if (State == "Chase")
         {
-            ChasePlayer();
+            if(!enemy_Attack.InRangePlayer)
+                ChasePlayer();
 
             if (distance > chaseRange)
             {
                 SetState("Idle");
             }
         }
+        else if (State == "AfterAttack")
+        {
+            MakeDist();
+            if(TimeInState > 2f){SetState("Chase");  enemy_Attack.afterAttack = false;}
+        }
+        else if(State == "StopMoving")
+        {
+            StopMoving();
+        }
         else if (State == "Idle")
         {
             StopMoving();
 
             if (distance <= chaseRange) { SetState("Chase"); return; }
-            if (TimeInState > 2f) { SetState("Patrol"); }
+            if (TimeInState > Random.Range(0,2)) { SetState("Patrol"); }
         }
         else if (State == "Patrol")
         {

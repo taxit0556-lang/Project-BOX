@@ -23,6 +23,8 @@ public class Enemy_Attack : MonoBehaviour
     public float AttackRange = 20f;
     public float ShakeAmount;
     private bool isAttacking;
+    public bool Attacktrigger;
+    public bool afterAttack;
     public bool CanAttack;
     public bool InRangePlayer;
     public bool hittingPlayer;
@@ -84,12 +86,17 @@ public class Enemy_Attack : MonoBehaviour
         
         if (AttackRange >= distance && !isAttacking && enemyAI.State != "Stuned")
             StartCoroutine(AttackLoop());
+
+        if(afterAttack)
+            AfterAttack();
+
     }
 
     IEnumerator AttackLoop()
     {
         isAttacking = true;
         ChooseAttack(false);
+        StartCoroutine(AttackCast());
         yield return new WaitForSeconds(2f);
         isAttacking = false;
         CanAttack = false;
@@ -98,21 +105,26 @@ public class Enemy_Attack : MonoBehaviour
 
     IEnumerator AttackCast()
     {
-        if(isAttacking)
+        if (isAttacking)
+        {
             AttackRaycast();
-        yield return new WaitForSeconds(attacks[chosenAttackIndex].AnimationTime);
+            yield return new WaitForSeconds(attacks[chosenAttackIndex].AnimationTime);
+            StopCoroutine(AttackCast());
+        }
     }   
 
     IEnumerator Shake()
     {
+        Attacktrigger = true;
         CanAttack = false;
         LeanTween.moveX(gameObject, transform.position.x + 0.1f, 0.05f)
         .setEase(LeanTweenType.easeShake)
         .setLoopPingPong(6);
 
         yield return new WaitForSeconds(0.5f);
+        Attacktrigger = false;
         CanAttack = true;
-
+        
         if(attacks[chosenAttackIndex].Range <= distance)
             ChooseAttack(true);
         else
@@ -121,8 +133,6 @@ public class Enemy_Attack : MonoBehaviour
 
     void ChooseAttack(bool ShakeAttack)
     {
-        StartCoroutine(AttackCast());
-
         float total = attacks.Sum(a => a.Weight);
         roll = Random.Range(0f, total);
 
@@ -140,6 +150,12 @@ public class Enemy_Attack : MonoBehaviour
                     {
                         enemyAI.SetState(attacks[i].Name + " Attack");
                         enemyAI.StunTime(attacks[i].AnimationTime);
+                        chosenAttackIndex = i;
+                        attacks[i].Execute();
+
+                        if (Attackhit)
+                            player_Attack.OnHit(1, transform);
+
                         ShakeAttack = false;
                     }
                     else
@@ -158,13 +174,19 @@ public class Enemy_Attack : MonoBehaviour
                         }
 
                         ShakeAttack = false;
+
+                        afterAttack = true;
                     
                     }
-
-                    return;            
+                    return;         
                 }
             }
         }
+    }
+
+    void AfterAttack()
+    {
+        enemyAI.SetState("AfterAttack");
     }
 
     void ChangeWeight(string attackName, float newWeight)

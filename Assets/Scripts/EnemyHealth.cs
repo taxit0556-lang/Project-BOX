@@ -13,9 +13,11 @@ public class EnemyHealth : MonoBehaviour
     Coroutine hitCoroutine;
 
     EnemyAI enemyAI;
+    Enemy_Attack enemy_Attack;
 
     void Start()
     {
+        enemy_Attack = GetComponent<Enemy_Attack>();
         enemyAI = GetComponent<EnemyAI>();
 
         rb = GetComponent<Rigidbody2D>();
@@ -24,21 +26,26 @@ public class EnemyHealth : MonoBehaviour
 
     public void TakeDamage(int damage, Transform attacker)
     {
-        enemyAI.SetState("Stuned");
-        currentHealth -= damage;
-        Debug.Log("Enemy health: " + currentHealth);
-
-        if (currentHealth <= 0)
+        if (!enemy_Attack.Attacktrigger)
         {
-            Die();
-            return;
-        }
+            if(!enemy_Attack.afterAttack)
+                enemyAI.SetState("Stuned");
+                
+            currentHealth -= damage;
+            Debug.Log("Enemy health: " + currentHealth);
 
-        float direction = transform.position.x > attacker.position.x ? 1f : -1f;
+            if (currentHealth <= 0)
+            {
+                Die();
+                return;
+            }
 
-        if (hitCoroutine != null)
+            float direction = transform.position.x > attacker.position.x ? 1f : -1f;
+
+            if (hitCoroutine != null)
             StopCoroutine(hitCoroutine);
-        hitCoroutine = StartCoroutine(GotHit(direction));
+            hitCoroutine = StartCoroutine(GotHit(direction));
+        }
     }
 
     IEnumerator GotHit(float direction)
